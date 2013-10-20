@@ -25,7 +25,7 @@ public class BombBehaviour : MonoBehaviour {
 			ActiverBombe();
 		}			
 	}
-	IEnumerator ActiverBombe()
+	public IEnumerator ActiverBombe()
 	{
 		Debug.Log("Bombe Activée");
 		Debug.Log(Time.time);

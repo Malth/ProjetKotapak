@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour 
+{
 
 	
 	private Transform _myTransform;
@@ -16,14 +17,16 @@ public class PlayerController : MonoBehaviour {
 	
 	
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 	
 		_myTransform = this.transform;
 	
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 		
 		
 		if(Input.GetKeyDown(KeyCode.DownArrow))

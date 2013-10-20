@@ -82,8 +82,9 @@ public class PutBomber : MonoBehaviour
 				test = GameObject.FindGameObjectWithTag("Player").transform.localPosition;
 				Debug.Log("Ma position : "+ test);
 				//Poser une bombe
+				Stock[compteur].transform.position = test;
 				BombeActuelle = Stock[compteur];
-				BombeActuelle.BombIsActive(true);
+				GetComponent<BombBehaviour>().ActiverBombe();
 				//BombeActuelle.activeSelf = true;
 				compteur++;
 			}
