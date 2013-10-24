@@ -4,6 +4,7 @@ using System.Collections;
 public class PutBomber : MonoBehaviour 
 {
 	private Transform _myTransform;
+	private int temps = 0;
 	public Vector3 test;
 	private bool _bombPresent = false;
 	public bool BombPresent 
@@ -74,21 +75,29 @@ public class PutBomber : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetKeyDown(KeyCode.Space))
+		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
 		{
-			if (BombPresent == false)
-			{
-				Debug.Log("Espace appuyé");
-				test = GameObject.FindGameObjectWithTag("Player").transform.localPosition;
-				Debug.Log("Ma position : "+ test);
-				//Poser une bombe
-				Stock[compteur].transform.position = test;
-				BombeActuelle = Stock[compteur];
-				GetComponent<BombBehaviour>().ActiverBombe();
-				//BombeActuelle.activeSelf = true;
-				compteur++;
-			}
+			Debug.Log("Espace appuyé");
+			test = GameObject.FindGameObjectWithTag("Player").transform.localPosition;
+			Debug.Log("Ma position : "+ test);
+			//Poser une bombe
+			BombPresent = true;
+			Stock[Compteur].transform.position = test;
+			Debug.Log("Bombe Posée");
+			//ActiverBombe(Stock[compteur]);
+			temps=0;
+			Compteur++;
+		}
+		if(BombPresent == true)
+			temps++;
+		if (temps >= 300)
+		{
+			Stock[Compteur-1].transform.position = Stock[10].transform.position;
+			Debug.Log ("Bombe disparue");
+			BombPresent = false;
+			temps = 0;
 		}
 	}
 }
+
  

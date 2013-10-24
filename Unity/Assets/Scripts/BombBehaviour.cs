@@ -25,6 +25,7 @@ public class BombBehaviour : MonoBehaviour {
 			ActiverBombe();
 		}			
 	}
+	
 	public IEnumerator ActiverBombe()
 	{
 		Debug.Log("Bombe Activée");
@@ -33,4 +34,5 @@ public class BombBehaviour : MonoBehaviour {
 		Debug.Log(Time.time);
 		Debug.Log("Bombe Explosée");
 	}
+	
 }
