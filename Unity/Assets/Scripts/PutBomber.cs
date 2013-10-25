@@ -4,7 +4,7 @@ using System.Collections;
 public class PutBomber : MonoBehaviour 
 {
 	private Transform _myTransform;
-	private int temps = 0;
+	private float temps = 0f;
 	public Vector3 test;
 	private bool _bombPresent = false;
 	public bool BombPresent 
@@ -65,11 +65,19 @@ public class PutBomber : MonoBehaviour
 	void Start () 
 	{
 		_myTransform = this.transform;
-        Stock = GameObject.FindGameObjectsWithTag("BombTest");
+        Stock = GameObject.FindGameObjectsWithTag("Bombe1");
 		Compteur = 0;
 		Debug.Log("Stock créé");
 		TailleStock = Stock.Length;
 		Debug.Log(TailleStock);
+	}
+
+	void resetBombe ()
+	{
+		Stock[Compteur-1].transform.position = Stock[10].transform.position;
+		Debug.Log ("Bombe disparue");
+		BombPresent = false;
+		temps = 0f;
 	}
 	
 	// Update is called once per frame
@@ -78,24 +86,26 @@ public class PutBomber : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
 		{
 			Debug.Log("Espace appuyé");
-			test = GameObject.FindGameObjectWithTag("Player").transform.localPosition;
+			test = _myTransform.position;
 			Debug.Log("Ma position : "+ test);
 			//Poser une bombe
 			BombPresent = true;
+			test = _myTransform.transform.position;
+			
 			Stock[Compteur].transform.position = test;
+
+			Debug.Log("Position de la bombe :"+Stock[Compteur].transform.position);
+			
 			Debug.Log("Bombe Posée");
-			//ActiverBombe(Stock[compteur]);
-			temps=0;
+			
+			temps=0f;
 			Compteur++;
 		}
 		if(BombPresent == true)
-			temps++;
-		if (temps >= 300)
+			temps += Time.deltaTime ;
+		if (temps >= 4)
 		{
-			Stock[Compteur-1].transform.position = Stock[10].transform.position;
-			Debug.Log ("Bombe disparue");
-			BombPresent = false;
-			temps = 0;
+			resetBombe ();
 		}
 	}
 }

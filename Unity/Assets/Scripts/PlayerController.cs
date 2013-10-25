@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
 		
 		if(Input.GetKeyDown(KeyCode.DownArrow))
 		{
-			Debug.Log(_myTransform.localEulerAngles);;
+			
 			_myTransform.eulerAngles = _bottomDirection;
 			
 		}
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
 		
 		if(Input.GetKeyDown(KeyCode.UpArrow))
 		{
-			Debug.Log(_myTransform.localEulerAngles);;
+			
 			_myTransform.eulerAngles = _topDirection;
 			
 		}
@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 		
 		if(Input.GetKeyDown(KeyCode.LeftArrow))
 		{
-			Debug.Log(_myTransform.localEulerAngles);;
+			
 			_myTransform.eulerAngles = _lefDirection;
 			
 		}
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
 		
 		if(Input.GetKeyDown(KeyCode.RightArrow))
 		{
-			Debug.Log(_myTransform.localEulerAngles);;
+			
 			_myTransform.eulerAngles = _rightDirection;
 			
 		}

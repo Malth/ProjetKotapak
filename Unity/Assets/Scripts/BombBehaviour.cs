@@ -3,7 +3,15 @@ using System.Collections;
 
 public class BombBehaviour : MonoBehaviour {
 	
-		private bool _bombIsActive = false;
+	
+	
+	private GameObject Player1 ;
+	private GameObject instantiated;
+	[SerializeField]
+	private GameObject SmallExplostion;
+	
+	private PutBomber putBomber ;
+	private bool _bombIsActive = false;
 	public bool BombIsActive 
 	{
 		get {
@@ -15,24 +23,30 @@ public class BombBehaviour : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
+		
+		Player1 = GameObject.FindGameObjectWithTag("Player");
+		putBomber = Player1.GetComponentInChildren<PutBomber>();
+	}
+
+	IEnumerator ActiverBombe ()
+	{
+		 yield return new WaitForSeconds(2);
+		 instantiated = (GameObject)Instantiate(SmallExplostion, transform.position, transform.rotation);	
+		 yield return new WaitForSeconds(1);
+		 Destroy (instantiated);
+		 
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if(BombIsActive)			
+		if(putBomber.BombPresent == true)			
 		{
-			ActiverBombe();
+			StartCoroutine(ActiverBombe ());
 		}			
+		
 	}
 	
-	public IEnumerator ActiverBombe()
-	{
-		Debug.Log("Bombe Activée");
-		Debug.Log(Time.time);
-		yield return new WaitForSeconds(3);
-		Debug.Log(Time.time);
-		Debug.Log("Bombe Explosée");
-	}
+
 	
 }
