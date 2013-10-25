@@ -93,7 +93,7 @@ public class PutBomber : MonoBehaviour
 			yield return new WaitForSeconds(3);
 			bombBehaviour = Stock[Compteur].GetComponent<BombBehaviour>();
 			print(bombBehaviour);
-			bombBehaviour.Ecrire();
+			bombBehaviour.makeExplosion();
 			compteur++;
 			resetBombe();
     }
