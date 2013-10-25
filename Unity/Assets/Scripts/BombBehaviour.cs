@@ -31,13 +31,26 @@ public class BombBehaviour : MonoBehaviour {
 		
 	}
 
-
-	
-	
-	
 	public void Ecrire()
 	{
 		instantiated = (GameObject)Instantiate(Bombe1Explosion, transform.position, transform.rotation);
 	}
 
+	public void OnTriggerEnter(Collider col) 
+	{
+		Debug.Log ("Tadaaaaa Trigger ok");
+		//Si le Layer est un Brick
+		if(col.gameObject.layer == LayerMask.NameToLayer("Bricks"))
+		{
+			Debug.Log ("Il y a un mur destructible.");
+		}
+		if(col.gameObject.layer == LayerMask.NameToLayer("Player"))
+		{
+			Debug.Log ("Il y a un joueur.");
+		}
+		if(col.gameObject.layer == LayerMask.NameToLayer("Walls"))
+		{
+			Debug.Log ("Il y a un mur indestructible.");
+		}
+	}	
 }

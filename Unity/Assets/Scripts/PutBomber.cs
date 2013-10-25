@@ -18,7 +18,8 @@ public class PutBomber : MonoBehaviour
 			_bombPresent = value;
 		}
 	}
-
+	
+	
 	private int compteur;
 	public int Compteur 
 	{
