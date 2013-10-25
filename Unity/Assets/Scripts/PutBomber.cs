@@ -4,9 +4,11 @@ using System.Collections;
 public class PutBomber : MonoBehaviour 
 {
 	private Transform _myTransform;
-	private float temps = 0f;
 	public Vector3 test;
 	private bool _bombPresent = false;
+	
+	private BombBehaviour bombBehaviour ;
+	
 	public bool BombPresent 
 	{
 		get {
@@ -71,42 +73,54 @@ public class PutBomber : MonoBehaviour
 		TailleStock = Stock.Length;
 		Debug.Log(TailleStock);
 	}
-
-	void resetBombe ()
+	
+	
+	
+	
+		void resetBombe ()
 	{
 		Stock[Compteur-1].transform.position = Stock[10].transform.position;
-		Debug.Log ("Bombe disparue");
 		BombPresent = false;
-		temps = 0f;
 	}
+	
+	
+	
+	
+	IEnumerator BombeActivated ()
+    {
+			Debug.Log("Bombe Active");
+			yield return new WaitForSeconds(3);
+			bombBehaviour = Stock[Compteur].GetComponent<BombBehaviour>();
+			print(bombBehaviour);
+			bombBehaviour.Ecrire();
+			compteur++;
+			resetBombe();
+    }
+	
+	
+	
+
+	
+	
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
 		{
-			Debug.Log("Espace appuyé");
+			
 			test = _myTransform.position;
-			Debug.Log("Ma position : "+ test);
 			//Poser une bombe
 			BombPresent = true;
 			test = _myTransform.transform.position;
 			
 			Stock[Compteur].transform.position = test;
+			StartCoroutine(BombeActivated());
+				
+			
+			
+		}
 
-			Debug.Log("Position de la bombe :"+Stock[Compteur].transform.position);
-			
-			Debug.Log("Bombe Posée");
-			
-			temps=0f;
-			Compteur++;
-		}
-		if(BombPresent == true)
-			temps += Time.deltaTime ;
-		if (temps >= 4)
-		{
-			resetBombe ();
-		}
 	}
 }
 
