@@ -5,15 +5,24 @@ public class BombBehaviour : MonoBehaviour {
 	
 	
 	
-	private GameObject Player1 ;
 	private GameObject instantiated;
 	
 	[SerializeField]
 	private GameObject ExplosionLvl1;
-
-
 	
-	private PutBomber putBomber ;
+	
+	private string _playerName;
+	
+	public string PlayerName{
+		get {
+			return _playerName;
+		}
+		set {
+			_playerName = value;
+		}
+	}
+	
+	
 	private bool _bombIsActive = false;
 	public bool BombIsActive 
 	{
@@ -26,15 +35,14 @@ public class BombBehaviour : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
-		
-		Player1 = GameObject.FindGameObjectWithTag("Player");
-		putBomber = Player1.GetComponentInChildren<PutBomber>();
+	
 		
 	}
 
 	public void makeExplosion()
 	{
 		instantiated = (GameObject)Instantiate(ExplosionLvl1, transform.position, transform.rotation);
+		instantiated.tag = PlayerName;
 	}
 
 	

@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.DownArrow))
 		{
 			
+			Debug.Log("ok");
 			_myTransform.eulerAngles = _bottomDirection;
 			
 		}
@@ -70,9 +71,6 @@ public class PlayerController : MonoBehaviour
 		{
 			_myTransform.localPosition += Vector3.forward * SpeedWalk * Time.deltaTime;
 		}
-		
-		
-		
 		
 		
 		

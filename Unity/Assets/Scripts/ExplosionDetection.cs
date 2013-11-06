@@ -20,7 +20,7 @@ public class ExplosionDetection : MonoBehaviour {
 		
 		if (IsDead)
 		{
-		GUI.Label (new Rect (Screen.width/2-30, Screen.width/2-100, 100, 30), "T'es mort !");
+		GUI.Label (new Rect (Screen.width/2-30, Screen.width/2-100, 200, 100), "Le joueur s'est fait tuer par"+this.transform.parent.tag);
 		Application.LoadLevel(0);	
 		}
 	

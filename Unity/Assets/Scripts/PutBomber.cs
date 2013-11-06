@@ -9,6 +9,20 @@ public class PutBomber : MonoBehaviour
 	
 	private BombBehaviour bombBehaviour ;
 	
+	
+	private string _myTag;
+	
+	public string MyTag 
+	{
+		get {
+			return this._myTag;
+		}
+		set {
+			_myTag = value;
+		}
+	}
+	
+	
 	public bool BombPresent 
 	{
 		get {
@@ -31,36 +45,30 @@ public class PutBomber : MonoBehaviour
 		}
 	}
 	
-	private GameObject _BombeActuelle;
-	public GameObject BombeActuelle
+	private GameObject _ActualBomb;
+	public GameObject ActualBomb
 	{
 		get {
-			return this._BombeActuelle;
+			return this._ActualBomb;
 		}
 		set {
-			_BombeActuelle = value;
+			_ActualBomb = value;
 		}
 	}	
-	private GameObject[] _stock;
-	public GameObject[] Stock 
+	
+	
+	[SerializeField]
+	private GameObject[] _standardBombsStock;
+	public GameObject[] StandardBombsStock 
 	{
 		get {
-			return this._stock;
+			return this._standardBombsStock;
 		}
 		set {
-			_stock = value;
+			_standardBombsStock = value;
 		}
 	}
-	private int _tailleStock;
-	public int TailleStock
-	{
-		get {
-			return this._tailleStock;
-		}
-		set {
-			_tailleStock = value;
-		}
-	}
+
 
 	
 
@@ -69,13 +77,9 @@ public class PutBomber : MonoBehaviour
 	{
 		
 		_myTransform = this.transform;
-		
-		
-		Stock = GameObject.FindGameObjectsWithTag("Bombe1");
 		Compteur = 0;
-		Debug.Log("Stock créé");
-		TailleStock = Stock.Length;
-		Debug.Log(TailleStock);
+		MyTag = gameObject.tag;
+		
 	}
 	
 	
@@ -83,7 +87,7 @@ public class PutBomber : MonoBehaviour
 	
 		void resetBombe ()
 	{
-		Stock[Compteur-1].transform.position = Stock[10].transform.position;
+		ActualBomb.transform.localPosition = Vector3.zero;
 		BombPresent = false;
 	}
 	
@@ -94,8 +98,8 @@ public class PutBomber : MonoBehaviour
     {
 			Debug.Log("Bombe Active");
 			yield return new WaitForSeconds(3);
-			bombBehaviour = Stock[Compteur].GetComponent<BombBehaviour>();
-			print(bombBehaviour);
+			bombBehaviour = ActualBomb.GetComponent<BombBehaviour>();
+			bombBehaviour.PlayerName = _myTag;
 			bombBehaviour.makeExplosion();
 			compteur++;
 			resetBombe();
@@ -118,7 +122,16 @@ public class PutBomber : MonoBehaviour
 			BombPresent = true;
 			_myPosition = _myTransform.transform.position;
 			
-			Stock[Compteur].transform.position = _myPosition;
+			int i = 0;
+			
+			do
+			{
+				Debug.Log(i);
+				ActualBomb = StandardBombsStock[i];
+			}
+			while((ActualBomb.GetComponent<BombBehaviour>().BombIsActive==true && i < StandardBombsStock.Length));
+			
+			ActualBomb.transform.position = _myPosition;
 			StartCoroutine(BombeActivated());
 				
 			
