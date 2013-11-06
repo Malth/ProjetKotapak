@@ -4,7 +4,7 @@ using System.Collections;
 public class PutBomber : MonoBehaviour 
 {
 	private Transform _myTransform;
-	public Vector3 test;
+	public Vector3 _myPosition;
 	private bool _bombPresent = false;
 	
 	private BombBehaviour bombBehaviour ;
@@ -67,8 +67,11 @@ public class PutBomber : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		
 		_myTransform = this.transform;
-        Stock = GameObject.FindGameObjectsWithTag("Bombe1");
+		
+		
+		Stock = GameObject.FindGameObjectsWithTag("Bombe1");
 		Compteur = 0;
 		Debug.Log("Stock créé");
 		TailleStock = Stock.Length;
@@ -110,12 +113,12 @@ public class PutBomber : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
 		{
 			
-			test = _myTransform.position;
+			
 			//Poser une bombe
 			BombPresent = true;
-			test = _myTransform.transform.position;
+			_myPosition = _myTransform.transform.position;
 			
-			Stock[Compteur].transform.position = test;
+			Stock[Compteur].transform.position = _myPosition;
 			StartCoroutine(BombeActivated());
 				
 			
