@@ -8,7 +8,7 @@ public class BombBehaviour : MonoBehaviour {
 	private GameObject instantiated;
 	
 	[SerializeField]
-	private GameObject ExplosionLvl1;
+	private GameObject ExplosionParticule;
 	
 	
 	private string _playerName;
@@ -41,7 +41,7 @@ public class BombBehaviour : MonoBehaviour {
 
 	public void makeExplosion()
 	{
-		instantiated = (GameObject)Instantiate(ExplosionLvl1, transform.position, transform.rotation);
+		instantiated = (GameObject)Instantiate(ExplosionParticule, transform.position, transform.rotation);
 		instantiated.tag = PlayerName;
 	}
 

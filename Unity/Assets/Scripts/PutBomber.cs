@@ -8,6 +8,10 @@ public class PutBomber : MonoBehaviour
 	private bool _bombPresent = false;
 	
 	private BombBehaviour bombBehaviour ;
+	private PlayerInventory playerInventory ;
+	
+	
+	
 	
 	
 	private string _myTag;
@@ -68,6 +72,19 @@ public class PutBomber : MonoBehaviour
 			_standardBombsStock = value;
 		}
 	}
+	
+	
+	[SerializeField]
+	private GameObject[] _megaBombsStock;
+	public GameObject[] MegadBombsStock 
+	{
+		get {
+			return this._megaBombsStock;
+		}
+		set {
+			_megaBombsStock = value;
+		}
+	}
 
 
 	
@@ -79,6 +96,8 @@ public class PutBomber : MonoBehaviour
 		_myTransform = this.transform;
 		Compteur = 0;
 		MyTag = gameObject.tag;
+		playerInventory = gameObject.GetComponent<PlayerInventory>();
+		
 		
 	}
 	
@@ -88,6 +107,7 @@ public class PutBomber : MonoBehaviour
 		void resetBombe ()
 	{
 		ActualBomb.transform.localPosition = Vector3.zero;
+		ActualBomb.rigidbody.velocity = Vector3.zero;
 		BombPresent = false;
 	}
 	
@@ -96,7 +116,8 @@ public class PutBomber : MonoBehaviour
 	
 	IEnumerator BombeActivated ()
     {
-			Debug.Log("Bombe Active");
+			
+		
 			yield return new WaitForSeconds(3);
 			bombBehaviour = ActualBomb.GetComponent<BombBehaviour>();
 			bombBehaviour.PlayerName = _myTag;
@@ -110,15 +131,9 @@ public class PutBomber : MonoBehaviour
 
 	
 	
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
-		{
-			
-			
-			//Poser une bombe
+	private void PutBomb(GameObject[] stock){
+		
+		//Poser une bombe
 			BombPresent = true;
 			_myPosition = _myTransform.transform.position;
 			
@@ -126,14 +141,35 @@ public class PutBomber : MonoBehaviour
 			
 			do
 			{
-				Debug.Log(i);
-				ActualBomb = StandardBombsStock[i];
+				ActualBomb = stock[i];
+				i++;
 			}
-			while((ActualBomb.GetComponent<BombBehaviour>().BombIsActive==true && i < StandardBombsStock.Length));
-			
+			while((ActualBomb.GetComponent<BombBehaviour>().BombIsActive==true && i < stock.Length));
 			ActualBomb.transform.position = _myPosition;
+			Debug.Log(ActualBomb.rigidbody.velocity);
+			ActualBomb.rigidbody.velocity = Vector3.zero;
 			StartCoroutine(BombeActivated());
+	}
+	
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		
+		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
+		{
+			
+						
+			switch(playerInventory.InCurrentSelection)
+			{
+				case 0: PutBomb(StandardBombsStock);
+				break;
 				
+				case 1: PutBomb(MegadBombsStock);
+				break;
+				
+				
+			}
 			
 			
 		}
