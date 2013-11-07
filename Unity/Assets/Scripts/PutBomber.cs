@@ -11,7 +11,8 @@ public class PutBomber : MonoBehaviour
 	private PlayerInventory playerInventory ;
 	
 	
-	
+	public float lifeTimeOfBomb;
+	private float currentTime = 0;
 	
 	
 	private string _myTag;
@@ -38,16 +39,7 @@ public class PutBomber : MonoBehaviour
 	}
 	
 	
-	private int compteur;
-	public int Compteur 
-	{
-		get {
-			return this.compteur;
-		}
-		set {
-			compteur = value;
-		}
-	}
+	
 	
 	private GameObject _ActualBomb;
 	public GameObject ActualBomb
@@ -94,7 +86,6 @@ public class PutBomber : MonoBehaviour
 	{
 		
 		_myTransform = this.transform;
-		Compteur = 0;
 		MyTag = gameObject.tag;
 		playerInventory = gameObject.GetComponent<PlayerInventory>();
 		
@@ -103,27 +94,17 @@ public class PutBomber : MonoBehaviour
 	
 	
 	
-	
-		void resetBombe ()
-	{
-		ActualBomb.transform.localPosition = Vector3.zero;
-		ActualBomb.rigidbody.velocity = Vector3.zero;
-		BombPresent = false;
-	}
+
 	
 	
 	
-	
-	IEnumerator BombeActivated ()
+	void BombeActivated()
     {
 			
-		
-			yield return new WaitForSeconds(3);
 			bombBehaviour = ActualBomb.GetComponent<BombBehaviour>();
 			bombBehaviour.PlayerName = _myTag;
-			bombBehaviour.makeExplosion();
-			compteur++;
-			resetBombe();
+			bombBehaviour.BombIsActive = true;
+
     }
 	
 	
@@ -135,7 +116,7 @@ public class PutBomber : MonoBehaviour
 		
 		//Poser une bombe
 			BombPresent = true;
-			_myPosition = _myTransform.transform.position;
+			_myPosition = _myTransform.position;
 			
 			int i = 0;
 			
@@ -144,11 +125,20 @@ public class PutBomber : MonoBehaviour
 				ActualBomb = stock[i];
 				i++;
 			}
+		
+		
 			while((ActualBomb.GetComponent<BombBehaviour>().BombIsActive==true && i < stock.Length));
+			
 			ActualBomb.transform.position = _myPosition;
-			Debug.Log(ActualBomb.rigidbody.velocity);
 			ActualBomb.rigidbody.velocity = Vector3.zero;
-			StartCoroutine(BombeActivated());
+			BombeActivated();
+		
+			
+			
+		
+		
+			
+			
 	}
 	
 	
@@ -156,10 +146,13 @@ public class PutBomber : MonoBehaviour
 	void Update () 
 	{
 		
+		
+		
 		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
 		{
 			
-						
+			
+			
 			switch(playerInventory.InCurrentSelection)
 			{
 				case 0: PutBomb(StandardBombsStock);
@@ -167,12 +160,26 @@ public class PutBomber : MonoBehaviour
 				
 				case 1: PutBomb(MegadBombsStock);
 				break;
-				
-				
+					
 			}
 			
 			
+			
 		}
+		
+		if(BombPresent)
+		{
+			currentTime += Time.deltaTime;
+			if(currentTime>lifeTimeOfBomb)
+			{
+				BombPresent = false;
+				currentTime = 0;
+			}
+		}
+		
+		
+			
+			
 
 	}
 }
