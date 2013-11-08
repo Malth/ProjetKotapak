@@ -131,8 +131,8 @@ public class PutBomber : MonoBehaviour
 			
 			ActualBomb.transform.position = _myPosition;
 			ActualBomb.rigidbody.velocity = Vector3.zero;
+			
 			BombeActivated();
-		
 			
 			
 		
@@ -158,11 +158,16 @@ public class PutBomber : MonoBehaviour
 				case 0: PutBomb(StandardBombsStock);
 				break;
 				
-				case 1: PutBomb(MegadBombsStock);
+			case 1: if(playerInventory.ResourceObjects["MegaBomb"]>0)
+				{ 
+					PutBomb(MegadBombsStock); 
+					playerInventory.ResourceObjects ["MegaBomb"]--;
+					playerInventory.RefreshRessource ();
+				}
 				break;
 					
 			}
-			
+
 			
 			
 		}

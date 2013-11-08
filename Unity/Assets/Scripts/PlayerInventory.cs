@@ -6,7 +6,10 @@ public class PlayerInventory : MonoBehaviour {
 	
 	
 	
-	private string[] _resourceObjects = new string[2];
+	private Dictionary<string, int> _resourceObjects = new Dictionary<string,int> ();
+	private Dictionary<int, string> _intToNameResourceObjects = new Dictionary<int,string> ();
+
+
 	private Color _activeColor = new Color(0.5f,0.5f,0.5f,1f);
 	private Color _inactiveColor = new Color(0.5f,0.5f,0.5f,0.2f);
 	
@@ -14,16 +17,17 @@ public class PlayerInventory : MonoBehaviour {
 	public GameObject[] _ressourceButtons;
 	public GameObject playerAvatar;
 	public GameObject playerMesh;
+	public TextMesh[] itemsIndicator;
+
 
 	public Texture[] texturesPlayerAvatar;
-	public Material[] materialsPlayer;
 
 
 
 	
 	
 	
-	public string[] ResourceObjects {
+	public  Dictionary<string, int> ResourceObjects {
 		
 		get {
 			return _resourceObjects;
@@ -50,7 +54,16 @@ public class PlayerInventory : MonoBehaviour {
 	
 	}
 	
-	
+
+
+	public void RefreshRessource()
+	{
+
+		for (int i = 1; i < ResourceObjects.Count; i++) {
+			itemsIndicator[i].text = ResourceObjects[_intToNameResourceObjects[i]].ToString();
+		}
+
+	}
 	
 	
 	
@@ -60,18 +73,21 @@ public class PlayerInventory : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		// Initialisation des objets
-		ResourceObjects[0] = "DefaultBomb";
-		ResourceObjects[1] = "MegaBomb";
-		
+		// Initialisation des dictionnaires
+		ResourceObjects.Add("DefaultBomb", 9999);
+		ResourceObjects.Add("MegaBomb", 0);
 		refreshButtons(0);
+
+		_intToNameResourceObjects.Add(0, "DefaultBomb");
+		_intToNameResourceObjects.Add(1, "MegaBomb");
+
 
 		switch (this.transform.tag) 
 		{
 		
 				case "player1":
 					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[0];
-					playerMesh.renderer.materials[7] = materialsPlayer[0] ;
+					playerMesh.renderer.materials [6].SetColor ("_Color", Color.blue);
 					break;
 
 				case "player2":
@@ -98,7 +114,7 @@ public class PlayerInventory : MonoBehaviour {
 	
 	void refreshButtons(int InCurrentSelection)
 	{
-		for(int i = 0; i<ResourceObjects.Length;i++)
+		for(int i = 0; i<ResourceObjects.Count;i++)
 		{
 
 			if(i==InCurrentSelection)
@@ -118,7 +134,7 @@ public class PlayerInventory : MonoBehaviour {
 		
 
 		
-		if(Input.GetAxis("Mouse ScrollWheel")>0&&InCurrentSelection+1<ResourceObjects.Length)
+		if(Input.GetAxis("Mouse ScrollWheel")>0&&InCurrentSelection+1<ResourceObjects.Count)
 		{
 			InCurrentSelection++;	
 			refreshButtons(InCurrentSelection);
@@ -129,7 +145,9 @@ public class PlayerInventory : MonoBehaviour {
 			InCurrentSelection--;
 			refreshButtons(InCurrentSelection);
 		}
-		
+
+
+
 		
 		
 		
