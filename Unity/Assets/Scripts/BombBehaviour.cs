@@ -24,7 +24,8 @@ public class BombBehaviour : MonoBehaviour {
 		}
 	}
 	
-	
+
+
 	private bool _bombIsActive = false;
 	public bool BombIsActive 
 	{

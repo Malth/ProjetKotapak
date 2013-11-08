@@ -12,6 +12,12 @@ public class PlayerInventory : MonoBehaviour {
 	
 	
 	public GameObject[] _ressourceButtons;
+	public GameObject playerAvatar;
+
+	public Texture[] texturesPlayerAvatar;
+
+
+
 	
 	
 	
@@ -57,8 +63,29 @@ public class PlayerInventory : MonoBehaviour {
 		ResourceObjects[1] = "MegaBomb";
 		
 		refreshButtons(0);
+
+		switch (this.transform.tag) 
+		{
 		
+				case "player1":
+					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[0];
+					break;
+
+				case "player2":
+					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[1];
+					break;
+
+				case "player3":
+					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[2];
+					break;
+
+				case "player4":
+					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[3];
+					break;
+
+		}
 		
+
 	}
 	
 	
