@@ -13,8 +13,10 @@ public class PlayerInventory : MonoBehaviour {
 	
 	public GameObject[] _ressourceButtons;
 	public GameObject playerAvatar;
+	public GameObject playerMesh;
 
 	public Texture[] texturesPlayerAvatar;
+	public Material[] materialsPlayer;
 
 
 
@@ -69,18 +71,22 @@ public class PlayerInventory : MonoBehaviour {
 		
 				case "player1":
 					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[0];
+					playerMesh.renderer.materials[7] = materialsPlayer[0] ;
 					break;
 
 				case "player2":
-					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[1];
+					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar [1];
+					playerMesh.renderer.materials [6].SetColor ("_Color", Color.red);
 					break;
 
 				case "player3":
 					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[2];
+					playerMesh.renderer.materials [6].SetColor ("_Color", Color.green);
 					break;
 
 				case "player4":
 					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[3];
+					playerMesh.renderer.materials [6].SetColor ("_Color", Color.magenta);
 					break;
 
 		}
