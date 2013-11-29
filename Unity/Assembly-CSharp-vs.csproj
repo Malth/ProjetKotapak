@@ -49,6 +49,8 @@
      <Compile Include="Assets\Scripts\CanonBallShoot.cs" />
      <Compile Include="Assets\Scripts\ExplosionDetection.cs" />
      <Compile Include="Assets\Scripts\ExplosionLvl1Behaviour.cs" />
+     <Compile Include="Assets\Scripts\KotapakInputManager.cs" />
+     <Compile Include="Assets\Scripts\KotapakNetworkScript.cs" />
      <Compile Include="Assets\Scripts\MenuMouseBehaviourScript.cs" />
      <Compile Include="Assets\Scripts\MenuTextBehaviourScript.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
