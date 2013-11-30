@@ -27,9 +27,13 @@ public class KotapakInputManager : MonoBehaviour {
 	void Start () {
 		kotapakNetworkScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakNetworkScript>();
 
+				if (Network.isServer) {
+				for (int i = 0; i< Network.connections.Length; i++)
+						_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
+				}
 
-		_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
-		
+				Debug.Log (kotapakNetworkScript.DicoPlayersIntents.Count);
+				
 	}
 	
 
@@ -38,25 +42,22 @@ public class KotapakInputManager : MonoBehaviour {
 
 
 
-		Debug.Log ("dico taille :" + kotapakNetworkScript.DicoPlayersIntents.Count);
-		Debug.Log ("controller taille :" + playersController.Count);
 
 
 
-		if (Network.isClient) {
-						Debug.Log ("Je suis un client");
 
-						if (Input.GetKeyDown (KeyCode.DownArrow)) {
-								//_p1toMoveDown = true;
-								
-								_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
-								Debug.Log ("Joueur veut descendre");
-								
-						}
-						if (Input.GetKeyUp (KeyCode.DownArrow)) {
-								//_p1toMoveDown = false;
-								_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, false);
-						}
+		if (Network.isClient) 
+		{
+
+				Debug.Log ("Je suis un client");
+				if (Input.GetKeyDown (KeyCode.DownArrow)) {
+					_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
+					Debug.Log ("Joueur veut descendre");
+				}
+				if (Input.GetKeyUp (KeyCode.DownArrow)) 
+				{
+					_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, false);
+				}
 
 
 			if (Input.GetKeyDown (KeyCode.UpArrow)) {
@@ -70,9 +71,6 @@ public class KotapakInputManager : MonoBehaviour {
 
 				_myNetworkView.RPC ("PlayerWantToMoveUp", RPCMode.Server, Network.player, false);
 			}		
-
-
-
 
 			if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 
@@ -108,36 +106,43 @@ public class KotapakInputManager : MonoBehaviour {
 
 	void FixedUpdate(){
 
+		Debug.Log ("dico taille :" + kotapakNetworkScript.DicoPlayersIntents.Count);
+		Debug.Log ("controller taille :" + playersController.Count);
 
 
-		foreach (var p in kotapakNetworkScript.DicoPlayersIntents) 
-		{
-
-			if (p.Value._wantToMoveDown) {
-				Debug.Log ("Entre dans la condition FU");
-				playersController[int.Parse(p.Key.ToString())].MoveToDown ();
-			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
-
-			if (p.Value._wantToMoveUp) {
-				Debug.Log ("Entre dans la condition FU");
-				playersController[int.Parse(p.Key.ToString())].MoveToUp ();
-			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+				foreach (var p in kotapakNetworkScript.DicoPlayersIntents) {
+						Debug.Log ("p=" + int.Parse (p.Key.ToString ()));
 
 
-			if (p.Value._wantToMoveLeft) {
-				Debug.Log ("Entre dans la condition FU");
-				playersController[int.Parse(p.Key.ToString())].MoveToLeft ();
-			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+						if (p.Value._wantToMoveDown || p.Value._wantToMoveUp || p.Value._wantToMoveRight || p.Value._wantToMoveLeft) {
+
+								if (p.Value._wantToMoveDown) {
+										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToDown ();
+								} 
+
+								if (p.Value._wantToMoveUp) {
+										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToUp ();
+								} 
 
 
-			if (p.Value._wantToMoveRight) {
-				Debug.Log ("Entre dans la condition FU");
-				playersController[int.Parse(p.Key.ToString())].MoveToRight ();
-			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+								if (p.Value._wantToMoveLeft) {
+										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToLeft ();
+								}
 
-		}
+								if (p.Value._wantToMoveRight) {
+										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToRight ();
+								}
+						
+						} else {
+								try {
+									playersController [int.Parse (p.Key.ToString ())-1]._inCurrentDeplacement=0;
+								} catch (System.Exception ex) {
+					
+								}
+							
+						}
 
-	
+				}
 	}
 
 
