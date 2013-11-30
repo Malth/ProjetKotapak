@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class KotapakNetworkScript : MonoBehaviour {
 
    
-
-    [SerializeField]
+	[SerializeField]
     private bool _isServer = true;
     public bool IsServer
     {
@@ -13,9 +13,35 @@ public class KotapakNetworkScript : MonoBehaviour {
         set { _isServer = value; }
     }
 
+
+
+	public class PlayerIntents
+	{
+
+		public bool _wantToMoveUp = false;
+		public bool _wantToMoveDown = false;
+		public bool _wantToMoveLeft = false;
+		public bool _wantToMoveRight = false;
+	
+	}
+
+
+	private Dictionary<NetworkPlayer, PlayerIntents> _dicoPlayersIntents;
+	public Dictionary<NetworkPlayer, PlayerIntents> DicoPlayersIntents
+	{
+		get { return _dicoPlayersIntents; }
+		set { _dicoPlayersIntents = value; }
+	}
+
+
+	void Awake () {
+		DontDestroyOnLoad(this.gameObject);
+		DicoPlayersIntents = new Dictionary<NetworkPlayer, PlayerIntents>();
+	}
+
 	void Start () {
         Application.runInBackground = true;
-
+		//Application.LoadLevel("level1");
         if (IsServer)
         {
             Network.InitializeSecurity();
@@ -29,9 +55,35 @@ public class KotapakNetworkScript : MonoBehaviour {
 
     void OnPlayerConnected(NetworkPlayer player)
     {
+
+		DicoPlayersIntents.Add(player, new PlayerIntents());
+		networkView.RPC("NewPlayerConnected", RPCMode.Others, player);
+
         if (Network.connections.Length == 2)
         {
-            Debug.Log("Chargement niveau");
+
+			if(IsServer){
+				networkView.RPC("LoadLevel", RPCMode.All, "level1");
+			}
         }
     }
+	
+
+
+	
+	[RPC]
+	void NewPlayerConnected(NetworkPlayer p)
+	{
+		DicoPlayersIntents.Add(p, new PlayerIntents());
+	}
+	
+
+
+	[RPC]
+	void LoadLevel(string nameLevel){
+
+		Application.LoadLevel(nameLevel);
+
+	}
+
 }

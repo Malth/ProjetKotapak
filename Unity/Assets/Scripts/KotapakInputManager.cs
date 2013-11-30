@@ -4,184 +4,200 @@ using System.Collections.Generic;
 
 
 public class KotapakInputManager : MonoBehaviour {
-	
-	[SerializeField]
-	private Transform player1;
-	public Transform Player1 
-	{
-		get {
-			return this.player1;
-		}
-		set {
-			player1 = value;
-		}
-	}
-	
-	int PlayerSpeed = 1;
-	
-	[SerializeField]
-	private Transform player2;
-	public Transform Player2 {
-		get {
-			return this.player2;
-		}
-		set {
-			player2 = value;
-		}
-	}	
-	
-	
-    class PlayerIntents
-    {
-        public bool _wantToMoveUp = false;
-        public bool _wantToMoveDown = false;
-		public bool _wantToMoveLeft = false;
-		public bool _wantToMoveRight = false;
-    }
 
-    private Dictionary<NetworkPlayer, PlayerIntents> _playersIntents;
-    private Dictionary<NetworkPlayer, PlayerIntents> PlayersIntents
-    {
-        get { return _playersIntents; }
-        set { _playersIntents = value; }
-    }
 
-    private NetworkView _myNetworkView = null;
+
+
+	[SerializeField]
+	public List<GameObject> PlayersOnline = new List<GameObject> ();
+
+
+
+	[SerializeField]
+	private GameObject _prefabPlayer;
+
+
+	private KotapakNetworkScript kotapakNetworkScript;
+	List <PlayerController> playersController = new List<PlayerController>() ;
+	
+   
+	[SerializeField]
+	private NetworkView _myNetworkView ;
 
 	void Start () {
-        PlayersIntents = new Dictionary<NetworkPlayer, PlayerIntents>();
-        _myNetworkView = this.gameObject.GetComponent<NetworkView>();
+		kotapakNetworkScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakNetworkScript>();
+
+
+		_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
+		
 	}
+	
 
-    void OnPlayerConnected(NetworkPlayer p)
-    {
-        PlayersIntents.Add(p, new PlayerIntents());
-        _myNetworkView.RPC("NewPlayerConnected", RPCMode.OthersBuffered, p);
-    }
-
-    [RPC]
-    void NewPlayerConnected(NetworkPlayer p)
-    {
-        PlayersIntents.Add(p, new PlayerIntents());
-    }
 	
 	void Update () {
-        if (Network.isClient)
-        {
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
-            }
-            if (Input.GetKeyUp(KeyCode.DownArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveDown", RPCMode.Server, Network.player, false);
-            }
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveUp", RPCMode.Server, Network.player, true);
-            }
-            if (Input.GetKeyUp(KeyCode.UpArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveUp", RPCMode.Server, Network.player, false);
-            }
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveLeft", RPCMode.Server, Network.player, true);
-            }
-            if (Input.GetKeyUp(KeyCode.LeftArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveLeft", RPCMode.Server, Network.player, false);
-            }
-			if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveRight", RPCMode.Server, Network.player, true);
-            }
-            if (Input.GetKeyUp(KeyCode.RightArrow))
-            {
-                _myNetworkView.RPC("PlayerWantToMoveRight", RPCMode.Server, Network.player, false);
-            }
-        }
+
+
+
+		Debug.Log ("dico taille :" + kotapakNetworkScript.DicoPlayersIntents.Count);
+		Debug.Log ("controller taille :" + playersController.Count);
+
+
+
+		if (Network.isClient) {
+						Debug.Log ("Je suis un client");
+
+						if (Input.GetKeyDown (KeyCode.DownArrow)) {
+								//_p1toMoveDown = true;
+								
+								_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
+								Debug.Log ("Joueur veut descendre");
+								
+						}
+						if (Input.GetKeyUp (KeyCode.DownArrow)) {
+								//_p1toMoveDown = false;
+								_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, false);
+						}
+
+
+			if (Input.GetKeyDown (KeyCode.UpArrow)) {
+
+
+				_myNetworkView.RPC ("PlayerWantToMoveUp", RPCMode.Server, Network.player, true);
+				Debug.Log ("Joueur veut monter");
+
+			}
+			if (Input.GetKeyUp (KeyCode.UpArrow)) {
+
+				_myNetworkView.RPC ("PlayerWantToMoveUp", RPCMode.Server, Network.player, false);
+			}		
+
+
+
+
+			if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+
+
+				_myNetworkView.RPC ("PlayerWantToMoveLeft", RPCMode.Server, Network.player, true);
+				Debug.Log ("Joueur veut aller à gauche");
+
+			}
+			if (Input.GetKeyUp (KeyCode.LeftArrow)) {
+
+				_myNetworkView.RPC ("PlayerWantToMoveLeft", RPCMode.Server, Network.player, false);
+			}	
+
+
+
+
+			if (Input.GetKeyDown (KeyCode.RightArrow)) {
+
+
+				_myNetworkView.RPC ("PlayerWantToMoveRight", RPCMode.Server, Network.player, true);
+				Debug.Log ("Joueur veut aller à droite");
+
+			}
+			if (Input.GetKeyUp (KeyCode.RightArrow)) {
+
+				_myNetworkView.RPC ("PlayerWantToMoveRight", RPCMode.Server, Network.player, false);
+			}		
+           
+		} 
+
+
 	}
 
-    void FixedUpdate()
-    {
-        int i = 0;
-        foreach (var p in PlayersIntents)
-        {
-            if (i == 0 && p.Value._wantToMoveDown)
-            {
-                Player1.Translate(Vector3.down * PlayerSpeed * Time.deltaTime);
-            }
-            if (i == 0 && p.Value._wantToMoveUp)
-            {
-                Player1.Translate(Vector3.up * PlayerSpeed * Time.deltaTime);
-            }
-			if (i == 0 && p.Value._wantToMoveLeft)
-            {
-                Player1.Translate(Vector3.left * PlayerSpeed * Time.deltaTime);
-            }
-            if (i == 0 && p.Value._wantToMoveRight)
-            {
-                Player1.Translate(Vector3.right * PlayerSpeed * Time.deltaTime);
-			}  
-            if (i == 1 && p.Value._wantToMoveUp)
-            {
-                Player2.Translate(Vector3.up * PlayerSpeed * Time.deltaTime);
-            }
-            if (i == 1 && p.Value._wantToMoveDown)
-            {
-                Player2.Translate(Vector3.down * PlayerSpeed * Time.deltaTime);
-            } 
-			if (i == 1 && p.Value._wantToMoveLeft)
-            {
-                Player2.Translate(Vector3.left * PlayerSpeed * Time.deltaTime);
-            }
-            if (i == 1 && p.Value._wantToMoveRight)
-            {
-                Player2.Translate(Vector3.right * PlayerSpeed * Time.deltaTime);
-            }
-			
-            i++;
-        }
-    }
+	void FixedUpdate(){
+
+
+
+		foreach (var p in kotapakNetworkScript.DicoPlayersIntents) 
+		{
+
+			if (p.Value._wantToMoveDown) {
+				Debug.Log ("Entre dans la condition FU");
+				playersController[int.Parse(p.Key.ToString())].MoveToDown ();
+			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+
+			if (p.Value._wantToMoveUp) {
+				Debug.Log ("Entre dans la condition FU");
+				playersController[int.Parse(p.Key.ToString())].MoveToUp ();
+			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+
+
+			if (p.Value._wantToMoveLeft) {
+				Debug.Log ("Entre dans la condition FU");
+				playersController[int.Parse(p.Key.ToString())].MoveToLeft ();
+			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+
+
+			if (p.Value._wantToMoveRight) {
+				Debug.Log ("Entre dans la condition FU");
+				playersController[int.Parse(p.Key.ToString())].MoveToRight ();
+			}else playersController[int.Parse(p.Key.ToString())]._inCurrentDeplacement = 0;
+
+		}
+
 	
-    [RPC]
-    void PlayerWantToMoveUp(NetworkPlayer p, bool b)
-    {
-        PlayersIntents[p]._wantToMoveUp = b;
-        if (Network.isServer)
-        {
-            _myNetworkView.RPC("PlayerWantToMoveUp", RPCMode.Others, p, b);
-        }
-    }
+	}
+
+
 
     [RPC]
-    void PlayerWantToMoveDown(NetworkPlayer p, bool b)
+	void PlayerWantToMoveDown(NetworkPlayer p, bool b)
     {
-        PlayersIntents[p]._wantToMoveDown = b;
-        if (Network.isServer)
-        {
-            _myNetworkView.RPC("PlayerWantToMoveDown", RPCMode.Others, p, b);
-        }
+		Debug.Log("Le joueur"+p+"veut descendre");
+		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveDown = b;
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("PlayerWantToMoveDown", RPCMode.OthersBuffered, p, b);
+		}
 	}
-		
+
+
 	[RPC]
-    void PlayerWantToMoveLeft(NetworkPlayer p, bool b)
-    {
-        PlayersIntents[p]._wantToMoveLeft = b;
-        if (Network.isServer)
-        {
-            _myNetworkView.RPC("PlayerWantToMoveLeft", RPCMode.Others, p, b);
-        }
-    }
-	
-	[RPC]
-    void PlayerWantToMoveRight(NetworkPlayer p, bool b)
-    {
-        PlayersIntents[p]._wantToMoveRight = b;
-        if (Network.isServer)
-        {
-            _myNetworkView.RPC("PlayerWantToMoveRight", RPCMode.Others, p, b);
-        }
+	void PlayerWantToMoveUp(NetworkPlayer p, bool b)
+	{
+		Debug.Log("RPC WantToMove");
+		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveUp = b;
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("PlayerWantToMoveUp", RPCMode.OthersBuffered, p, b);
+		}
 	}
+
+	[RPC]
+	void PlayerWantToMoveLeft(NetworkPlayer p, bool b)
+	{
+		Debug.Log("RPC WantToMove");
+		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveLeft = b;
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("PlayerWantToMoveLeft", RPCMode.OthersBuffered, p, b);
+		}
+	}
+
+
+	[RPC]
+	void PlayerWantToMoveRight(NetworkPlayer p, bool b)
+	{
+		Debug.Log("RPC WantToMove");
+		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveRight = b;
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("PlayerWantToMoveRight", RPCMode.OthersBuffered, p, b);
+		}
+	}
+
+
+	[RPC]
+	void createNewPlayer()
+	{
+			GameObject Player = Instantiate(_prefabPlayer) as GameObject;
+			playersController.Add(Player.GetComponent<PlayerController>());
+	}
+
 }
