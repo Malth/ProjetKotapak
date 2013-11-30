@@ -19,32 +19,39 @@ public class KotapakInputManager : MonoBehaviour {
 
 	private KotapakNetworkScript kotapakNetworkScript;
 	List <PlayerController> playersController = new List<PlayerController>() ;
+	List <PutBomber> putBombers = new List<PutBomber>();
 	
+	private PutBomber putBomberScript;
+	
+   	int count = 0;
    
 	[SerializeField]
 	private NetworkView _myNetworkView ;
 
 	void Start () {
 		kotapakNetworkScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakNetworkScript>();
+		
+		//ICI QUEL SCRIPT DOIT-ON ALLER CHERCHER ?
+		putBomberScript = GameObject.Find("").GetComponent<PutBomber>();
+		
+		//Chargement des spawns
+		spawns[0] = new Vector3(12,1,12);
+		spawns[1] = new Vector3(-12,1,12);
+		spawns[2] = new Vector3(12,1,-12);
+		spawns[3] = new Vector3(-12,1,-12);
+		
+		if (Network.isServer) {
+		for (int i = 0; i< Network.connections.Length; i++)
+				_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
+		}
 
-				if (Network.isServer) {
-				for (int i = 0; i< Network.connections.Length; i++)
-						_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
-				}
-
-				Debug.Log (kotapakNetworkScript.DicoPlayersIntents.Count);
+		Debug.Log (kotapakNetworkScript.DicoPlayersIntents.Count);
 				
 	}
 	
 
 	
 	void Update () {
-
-
-
-
-
-
 
 		if (Network.isClient) 
 		{
@@ -97,8 +104,18 @@ public class KotapakInputManager : MonoBehaviour {
 			if (Input.GetKeyUp (KeyCode.RightArrow)) {
 
 				_myNetworkView.RPC ("PlayerWantToMoveRight", RPCMode.Server, Network.player, false);
-			}		
-           
+			}	
+			
+			if (Input.GetKeyDown (KeyCode.Space)) 
+			{
+				_myNetworkView.RPC ("PlayerPutBomb", RPCMode.Server, Network.player, true);
+				Debug.Log ("Joueur pose bombe");
+			}
+			if (Input.GetKeyUp (KeyCode.Space)) 
+			{
+				_myNetworkView.RPC ("PlayerPutBomb", RPCMode.Server, Network.player, false);
+
+			}
 		} 
 
 
@@ -108,43 +125,63 @@ public class KotapakInputManager : MonoBehaviour {
 
 		Debug.Log ("dico taille :" + kotapakNetworkScript.DicoPlayersIntents.Count);
 		Debug.Log ("controller taille :" + playersController.Count);
+		Debug.Log ("bombers taille :" + putBombers.Count);
+
+		foreach (var p in kotapakNetworkScript.DicoPlayersIntents) {
+			Debug.Log ("p=" + int.Parse (p.Key.ToString ()));
 
 
-				foreach (var p in kotapakNetworkScript.DicoPlayersIntents) {
-						Debug.Log ("p=" + int.Parse (p.Key.ToString ()));
+			if (p.Value._wantToMoveDown || p.Value._wantToMoveUp || p.Value._wantToMoveRight || p.Value._wantToMoveLeft) {
+
+				if (p.Value._wantToMoveDown) {
+					playersController [int.Parse (p.Key.ToString ()) - 1].MoveToDown ();
+				} 
+
+				if (p.Value._wantToMoveUp) {
+					playersController [int.Parse (p.Key.ToString ()) - 1].MoveToUp ();
+				} 
 
 
-						if (p.Value._wantToMoveDown || p.Value._wantToMoveUp || p.Value._wantToMoveRight || p.Value._wantToMoveLeft) {
-
-								if (p.Value._wantToMoveDown) {
-										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToDown ();
-								} 
-
-								if (p.Value._wantToMoveUp) {
-										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToUp ();
-								} 
-
-
-								if (p.Value._wantToMoveLeft) {
-										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToLeft ();
-								}
-
-								if (p.Value._wantToMoveRight) {
-										playersController [int.Parse (p.Key.ToString ()) - 1].MoveToRight ();
-								}
-						
-						} else {
-								try {
-									playersController [int.Parse (p.Key.ToString ())-1]._inCurrentDeplacement=0;
-								} catch (System.Exception ex) {
-					
-								}
-							
-						}
-
+				if (p.Value._wantToMoveLeft) {
+					playersController [int.Parse (p.Key.ToString ()) - 1].MoveToLeft ();
 				}
+
+				if (p.Value._wantToMoveRight) {
+					playersController [int.Parse (p.Key.ToString ()) - 1].MoveToRight ();
+				}
+			
+			} else {
+				try {
+					playersController [int.Parse (p.Key.ToString ())-1]._inCurrentDeplacement=0;
+				} catch (System.Exception ex) {
+	
+				}
+				
+			}
+
+		}
+	
+		// CETTE PARTIE POSE PROBLEME JE PENSE
+		foreach (var p in kotapakNetworkScript.DicoPlayersBombPresent) {
+					
+			if (p.Value._playerBombPresent) {
+		
+				if (p.Value._playerBombPresent) {
+					putBombers[int.Parse (p.Key.ToString ()) - 1].Update();
+				} 
+			}
+		}
+
 	}
 
+	[RPC]	
+	void PlayerPutBomb(NetworkPlayer p, bool b)
+	{
+		kotapakNetworkScript.DicoPlayersBombPresent[p]._playerBombPresent = b;
+		{
+			_myNetworkView.RPC("PlayerPutBomb", RPCMode.OthersBuffered, p, b);
+		}
+	}
 
 
     [RPC]
@@ -201,8 +238,12 @@ public class KotapakInputManager : MonoBehaviour {
 	[RPC]
 	void createNewPlayer()
 	{
-			GameObject Player = Instantiate(_prefabPlayer) as GameObject;
-			playersController.Add(Player.GetComponent<PlayerController>());
+		GameObject Player = Instantiate(_prefabPlayer) as GameObject;
+		Player.transform.position = spawns[count];
+		playersController.Add(Player.GetComponent<PlayerController>());
+		putBombers.Add(Player.GetComponent<PutBomber>());
+		count++;
 	}
+
 
 }
