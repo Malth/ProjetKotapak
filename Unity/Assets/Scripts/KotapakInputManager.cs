@@ -245,7 +245,7 @@ public class KotapakInputManager : MonoBehaviour {
 		Player.transform.position = spawns[count];
 		playersController.Add(Player.GetComponent<PlayerController>());
 		putBombers.Add(Player.GetComponent<PutBomber>());
-		playerInventoryScript = Player.GetComponent<PlayerInvenstory> ();
+		playerInventoryScript = Player.GetComponent<PlayerInventory> ();
 		playerInventoryScript.ChangeAvatar(Player.tag);
 		playerInventory.Add(playerInventoryScript);
 
