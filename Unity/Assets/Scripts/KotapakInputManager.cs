@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public class KotapakInputManager : MonoBehaviour {
@@ -27,7 +28,8 @@ public class KotapakInputManager : MonoBehaviour {
 	List <PlayerController> playersController = new List<PlayerController>() ;
 	List <PutBomber> putBombers = new List<PutBomber>();
 	List <PlayerInventory> playerInventory = new List<PlayerInventory>();
-	
+
+
 
 	
    	int count = 0;
@@ -118,6 +120,7 @@ public class KotapakInputManager : MonoBehaviour {
 			{
 				_myNetworkView.RPC("PlayerRefreshButton", RPCMode.Server, Network.player, playerInventory[int.Parse(Network.player.ToString())-1].InCurrentSelection );
 				_myNetworkView.RPC ("PlayerWantPutBomb", RPCMode.Server, Network.player, true);
+				_myNetworkView.RPC ("PlayerMAJstock", RPCMode.Server, Network.player, playerInventory[int.Parse(Network.player.ToString())-1].ResourceObjects);
 			}
 
 		} 
@@ -180,12 +183,15 @@ public class KotapakInputManager : MonoBehaviour {
 	[RPC]	
 	void PlayerWantPutBomb(NetworkPlayer p, bool b)
 	{
-		kotapakNetworkScript.DicoPlayersIntents[p]._wantToPutBomb = b;
+		int playerIndice = int.Parse(p.ToString())-1;
+		if (playerInventory[playerIndice].ResourceObjects[playerInventory[playerIndice].IntToNameResourceObjects[playerInventory[playerIndice].InCurrentSelection]]>0) 
+				{
+						kotapakNetworkScript.DicoPlayersIntents [p]._wantToPutBomb = b;
 
-		if (Network.isServer)
-		{
-			_myNetworkView.RPC("PlayerWantPutBomb", RPCMode.OthersBuffered, p, b);
-		}
+						if (Network.isServer) {
+								_myNetworkView.RPC ("PlayerWantPutBomb", RPCMode.OthersBuffered, p, b);
+						}
+				}
 
 	}
 
@@ -245,6 +251,18 @@ public class KotapakInputManager : MonoBehaviour {
 		if (Network.isServer)
 		{
 			_myNetworkView.RPC("PlayerRefreshButton", RPCMode.OthersBuffered, p, currentSelect );
+		}
+	}
+
+
+	[RPC]
+	void PlayerMAJstock(NetworkPlayer p,  Dictionary<string, int> currentResource)
+	{
+		playerInventory [int.Parse (p.ToString ()) - 1].ResourceObjects = currentResource;
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("PlayerRefreshButton", RPCMode.OthersBuffered, p, currentResource );
 		}
 	}
 

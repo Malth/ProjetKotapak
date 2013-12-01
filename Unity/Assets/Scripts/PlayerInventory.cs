@@ -38,6 +38,17 @@ public class PlayerInventory : MonoBehaviour {
 		}
 	
 	}
+
+	public  Dictionary<int, string> IntToNameResourceObjects {
+
+		get {
+			return _intToNameResourceObjects;
+		}
+		set {
+			_intToNameResourceObjects = value;
+		}
+
+	}
 	
 	
 	
@@ -108,11 +119,11 @@ public class PlayerInventory : MonoBehaviour {
 
 		// Initialisation des dictionnaires
 		ResourceObjects.Add("DefaultBomb", 9999);
-		ResourceObjects.Add("MegaBomb", 0);
+		ResourceObjects.Add("MegaBomb", 2);
 		refreshButtons(0);
 
-		_intToNameResourceObjects.Add(0, "DefaultBomb");
-		_intToNameResourceObjects.Add(1, "MegaBomb");
+		IntToNameResourceObjects.Add(0, "DefaultBomb");
+		IntToNameResourceObjects.Add(1, "MegaBomb");
 
 
 

@@ -90,7 +90,8 @@ public class PutBomber : MonoBehaviour
 
 
 				case 1: 
-					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]); 
+					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]);
+					actualPlayerInventory.ResourceObjects[actualPlayerInventory.IntToNameResourceObjects[1]]--;
 					//actualPlayerInventory.ResourceObjects ["MegaBomb"]--;
 					//actualPlayerInventory.RefreshRessource ();
 				
