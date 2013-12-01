@@ -1,63 +1,101 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class PutBomber : MonoBehaviour 
 {
 	private Transform _myTransform;
-	public Vector3 _myPosition;
+	public Vector3 test;
 	private bool _bombPresent = false;
 	
 	private BombBehaviour bombBehaviour ;
-	private PlayerInventory playerInventory ;
 	
-	
-	public float lifeTimeOfBomb;
-	private float currentTime = 0;
-	
-	
-	private string _myTag;
-	
-	public string MyTag 
+	public bool BombPresent 
 	{
 		get {
-			return this._myTag;
+			return this._bombPresent;
 		}
 		set {
-			_myTag = value;
+			_bombPresent = value;
 		}
 	}
 	
+	
+	private int compteur;
+	public int Compteur 
+	{
+		get {
+			return this.compteur;
+		}
+		set {
+			compteur = value;
+		}
+	}
+	
+	private GameObject _BombeActuelle;
+	public GameObject BombeActuelle
+	{
+		get {
+			return this._BombeActuelle;
+		}
+		set {
+			_BombeActuelle = value;
+		}
+	}	
+	private GameObject[] _stock;
+	public GameObject[] Stock 
+	{
+		get {
+			return this._stock;
+		}
+		set {
+			_stock = value;
+		}
+	}
+	private int _tailleStock;
+	public int TailleStock
+	{
+		get {
+			return this._tailleStock;
+		}
+		set {
+			_tailleStock = value;
+		}
+	}
 
-
-	[SerializeField]
-	public GameObject[] Bombes ;
-
+	
 
 	// Use this for initialization
 	void Start () 
 	{
-		
 		_myTransform = this.transform;
-		MyTag = gameObject.tag;
-		playerInventory = gameObject.GetComponent<PlayerInventory>();
-		
-		
+        Stock = GameObject.FindGameObjectsWithTag("Bombe1");
+		Compteur = 0;
+		Debug.Log("Stock créé");
+		TailleStock = Stock.Length;
+		Debug.Log(TailleStock);
 	}
 	
 	
 	
-
+	
+		void resetBombe ()
+	{
+		Stock[Compteur-1].transform.position = Stock[10].transform.position;
+		BombPresent = false;
+	}
 	
 	
 	
-	void BombeActivated(GameObject myBomb)
+	
+	IEnumerator BombeActivated ()
     {
-			
-			bombBehaviour = myBomb.GetComponent<BombBehaviour>();
-			bombBehaviour.PlayerName = _myTag;
-			bombBehaviour.BombIsActive = true;
-
+			Debug.Log("Bombe Active");
+			yield return new WaitForSeconds(3);
+			bombBehaviour = Stock[Compteur].GetComponent<BombBehaviour>();
+			print(bombBehaviour);
+			bombBehaviour.makeExplosion();
+			compteur++;
+			resetBombe();
     }
 	
 	
@@ -65,68 +103,24 @@ public class PutBomber : MonoBehaviour
 
 	
 	
-	public void PutBomb(GameObject kindOfBomb){
-		
-		GameObject myBomb = Instantiate (kindOfBomb)as GameObject;
-		_myPosition = _myTransform.position;
-		myBomb.transform.position = _myPosition;
-		myBomb.rigidbody.velocity = Vector3.zero;
-
-			
-		BombeActivated(myBomb);
-						
-	}
-
-
-
-	public void wantToPutBomb(PlayerInventory actualPlayerInventory){
-
-
-			Debug.Log (actualPlayerInventory.InCurrentSelection);
-			switch(actualPlayerInventory.InCurrentSelection)
-			{
-				case 0: PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]);
-				break;
-
-
-				case 1: 
-					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]);
-					actualPlayerInventory.ResourceObjects[actualPlayerInventory.IntToNameResourceObjects[1]]--;
-					//actualPlayerInventory.ResourceObjects ["MegaBomb"]--;
-					//actualPlayerInventory.RefreshRessource ();
-				
-				break;
-
-			/*
-				case 1: if(actualPlayerInventory.ResourceObjects["MegaBomb"]>0)
-				{ 
-					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]); 
-					actualPlayerInventory.ResourceObjects ["MegaBomb"]--;
-					actualPlayerInventory.RefreshRessource ();
-				}
-				break;
-			*/
-
-			}
-
-
-
-	}
-
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		
-		
-
-
-
-
-		
-		
+		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
+		{
+			
+			test = _myTransform.position;
+			//Poser une bombe
+			BombPresent = true;
+			test = _myTransform.transform.position;
+			
+			Stock[Compteur].transform.position = test;
+			StartCoroutine(BombeActivated());
+				
 			
 			
+		}
 
 	}
 }

@@ -35,9 +35,9 @@ public class CanonBallShoot : MonoBehaviour {
 	}
 	
 	
-	IEnumerator Wait4seconds ()
+	IEnumerator Wait3seconds ()
 	{
-		yield return new WaitForSeconds(4);
+		yield return new WaitForSeconds(3);
 		BulletStopped = false;
 	}
 	
@@ -46,22 +46,22 @@ public class CanonBallShoot : MonoBehaviour {
 	void Update () {
 		if(BulletStopped)
 		{
-			StartCoroutine(Wait4seconds());
+			StartCoroutine(Wait3seconds());
 		}
 		if(!BulletStopped)
 		{
 			switch(_tagName)
 			{
-				case "right" :	_myRigidBody.AddForce(Vector3.right *3);
+				case "right" :	_myRigidBody.AddForce(Vector3.right *5);
 				break;
 				
-				case "left" : _myRigidBody.AddForce(Vector3.left *3);
+				case "left" : _myRigidBody.AddForce(Vector3.left *5);
 				break;
 				
-				case "top" : _myRigidBody.AddForce(Vector3.back *3);
+				case "top" : _myRigidBody.AddForce(Vector3.back *5);
 				break;
 				
-				case "bottom" :	_myRigidBody.AddForce(Vector3.forward *3);
+				case "bottom" :	_myRigidBody.AddForce(Vector3.forward *5);
 				break;
 			}
 			
@@ -80,13 +80,7 @@ public class CanonBallShoot : MonoBehaviour {
 			_myRigidBody.velocity = Vector3.zero;
 			BulletStopped = true;	
 		}
-
-		if(col.gameObject.layer == LayerMask.NameToLayer("Player"))
-		{
-
-			Destroy(col.gameObject);
-
-		}
+		
 		
 		
 	}
