@@ -49,7 +49,7 @@ public class KotapakNetworkScript : MonoBehaviour {
         if (IsServer)
         {
             Network.InitializeSecurity();
-            Network.InitializeServer(3, 6600, true);
+            Network.InitializeServer(1, 6600, true);
         }
         else
         {
@@ -62,7 +62,7 @@ public class KotapakNetworkScript : MonoBehaviour {
 		DicoPlayersIntents.Add(player, new PlayerIntents());
 		networkView.RPC("NewPlayerConnected", RPCMode.OthersBuffered, player);
 
-        if (Network.connections.Length == 3)
+        if (Network.connections.Length == 1)
         {
 
 			if(IsServer){

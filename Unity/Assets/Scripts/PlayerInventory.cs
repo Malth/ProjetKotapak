@@ -24,8 +24,7 @@ public class PlayerInventory : MonoBehaviour {
 
 
 
-	
-	
+
 	
 	public  Dictionary<string, int> ResourceObjects {
 		
@@ -67,6 +66,36 @@ public class PlayerInventory : MonoBehaviour {
 	
 	
 	
+	public void ChangeAvatar(string tagName){
+
+		playerAvatar = GameObject.Find ("Avatar");
+
+		switch (tagName) 
+		{
+
+			case "player1":
+			playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[0];
+			playerMesh.renderer.materials [6].SetColor ("_Color", Color.blue);
+			break;
+
+			case "player2":
+			playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar [1];
+			playerMesh.renderer.materials [6].SetColor ("_Color", Color.red);
+			break;
+
+			case "player3":
+			playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[2];
+			playerMesh.renderer.materials [6].SetColor ("_Color", Color.green);
+			break;
+
+			case "player4":
+			playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[3];
+			playerMesh.renderer.materials [6].SetColor ("_Color", Color.magenta);
+			break;
+
+		}
+	}
+
 	
 	
 	
@@ -82,30 +111,7 @@ public class PlayerInventory : MonoBehaviour {
 		_intToNameResourceObjects.Add(1, "MegaBomb");
 
 
-		switch (this.transform.tag) 
-		{
-		
-				case "player1":
-					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[0];
-					playerMesh.renderer.materials [6].SetColor ("_Color", Color.blue);
-					break;
 
-				case "player2":
-					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar [1];
-					playerMesh.renderer.materials [6].SetColor ("_Color", Color.red);
-					break;
-
-				case "player3":
-					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[2];
-					playerMesh.renderer.materials [6].SetColor ("_Color", Color.green);
-					break;
-
-				case "player4":
-					playerAvatar.renderer.material.mainTexture = texturesPlayerAvatar[3];
-					playerMesh.renderer.materials [6].SetColor ("_Color", Color.magenta);
-					break;
-
-		}
 		
 
 	}

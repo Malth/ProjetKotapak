@@ -21,6 +21,9 @@ public class KotapakInputManager : MonoBehaviour {
 	private PutBomber putBomberScript;
 	private PlayerInventory playerInventoryScript;
 
+	[SerializeField]
+	private GameObject GUIcamera ;
+
 	List <PlayerController> playersController = new List<PlayerController>() ;
 	List <PutBomber> putBombers = new List<PutBomber>();
 	List <PlayerInventory> playerInventory = new List<PlayerInventory>();
@@ -34,7 +37,8 @@ public class KotapakInputManager : MonoBehaviour {
 
 	void Start () {
 		kotapakNetworkScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakNetworkScript>();
-		
+		GameObject myGUIcamera = Instantiate (GUIcamera) as GameObject;
+		DontDestroyOnLoad (myGUIcamera);
 	
 		
 		//Chargement des spawns
@@ -122,10 +126,6 @@ public class KotapakInputManager : MonoBehaviour {
 
 	void FixedUpdate(){
 
-	
-		Debug.Log ("Player controller :"+playersController.Count);
-		Debug.Log ("Put bombers:"+putBombers.Count);
-		Debug.Log ("Player inventory :"+playerInventory.Count);
 
 		foreach (var p in kotapakNetworkScript.DicoPlayersIntents) {
 
@@ -240,11 +240,21 @@ public class KotapakInputManager : MonoBehaviour {
 	void createNewPlayer()
 	{
 		GameObject Player = Instantiate(_prefabPlayer) as GameObject;
+		Player.tag = "player" + (count+1).ToString() ;
+		Debug.Log(Player.tag);
 		Player.transform.position = spawns[count];
 		playersController.Add(Player.GetComponent<PlayerController>());
 		putBombers.Add(Player.GetComponent<PutBomber>());
-		playerInventory.Add(Player.GetComponent<PlayerInventory>());
+		playerInventoryScript = Player.GetComponent<PlayerInvenstory> ();
+		playerInventoryScript.ChangeAvatar(Player.tag);
+		playerInventory.Add(playerInventoryScript);
+
+
 		count++;
+
+
+
+
 	}
 
 
