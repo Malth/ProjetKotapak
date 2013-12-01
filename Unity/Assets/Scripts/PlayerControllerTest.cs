@@ -33,113 +33,99 @@ public class PlayerControllerTest : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-	
 		_myTransform = this.transform;
 	
 	}
 	
 	// Update is called once per frame
 	void Update () 
-	{
-		
-
-
-		if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 1) 
+	{	
+		if(Time.timeScale == 0 )
 		{
-
-
-			if(Input.GetKey(KeyCode.DownArrow))
+			if (Input.GetKeyUp(KeyCode.P))
 			{
-				if(_inCurrentDeplacement == 0)
-				{
-					_myTransform.eulerAngles = _bottomDirection;
-					_inCurrentDeplacement = 1;
-
-				}
-				_myTransform.localPosition += Vector3.back * SpeedWalk * Time.deltaTime;
+				Debug.Log ("Resume");
+				Time.timeScale = 1;
 			}
-
-			if(Input.GetKeyUp(KeyCode.DownArrow))
-			{
-				_inCurrentDeplacement = 0;
-			}
-
-
-
-
 		}
-
-		
-
-		
-		if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 2) 
+		else
 		{
-				
+			if (Input.GetKeyUp(KeyCode.P))
+			{
+				Debug.Log ("Pause");
+				Time.timeScale = 0;
+			}
+			
+			if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 1) 
+			{	
+				if(Input.GetKey(KeyCode.DownArrow))
+				{
+					if(_inCurrentDeplacement == 0)
+					{
+						_myTransform.eulerAngles = _bottomDirection;
+						_inCurrentDeplacement = 1;
+	
+					}
+					_myTransform.localPosition += Vector3.back * SpeedWalk * Time.deltaTime;
+				}
+				if(Input.GetKeyUp(KeyCode.DownArrow))
+				{
+					_inCurrentDeplacement = 0;
+				}
+			}
+					
+			if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 2) 
+			{
+					
 				if (Input.GetKey (KeyCode.UpArrow)) {
 					if(_inCurrentDeplacement == 0) {
-
+	
 						_myTransform.eulerAngles = _topDirection;
 						_inCurrentDeplacement = 2;
-
+	
 					}
 						_myTransform.localPosition += Vector3.forward * SpeedWalk * Time.deltaTime;
 				}
-
-
+	
+	
 				if(Input.GetKeyUp(KeyCode.UpArrow))
 				{
 					_inCurrentDeplacement = 0;
 				}
-
-		}
-		
-		
-		if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 3)
-		{
-				
-
+			}	
+			
+			if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 3)
+			{
 				if (Input.GetKey (KeyCode.LeftArrow)) {
 					if (_inCurrentDeplacement == 0) {
-
+	
 						_myTransform.eulerAngles = _lefDirection;
 						_inCurrentDeplacement = 3;
-
 					}
 						_myTransform.localPosition += Vector3.left * SpeedWalk * Time.deltaTime;
 				}
-
-
 				if(Input.GetKeyUp(KeyCode.LeftArrow))
 				{
 					_inCurrentDeplacement = 0;
 				}
-		}
-		
-		
-		
-		if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 4) 
-		{
-
+			}
+			
+			if (_inCurrentDeplacement == 0 || _inCurrentDeplacement == 4) 
+			{
 				if (Input.GetKey (KeyCode.RightArrow)) {
 					if (_inCurrentDeplacement == 0) {
-
+	
 						_myTransform.eulerAngles = _rightDirection;
 						_inCurrentDeplacement = 4;
 					}
 						_myTransform.localPosition += Vector3.right * SpeedWalk * Time.deltaTime;
 				}
-
 				if(Input.GetKeyUp(KeyCode.RightArrow))
 				{
 					_inCurrentDeplacement = 0;
 				}
-
+			}
 		}
-		
-
-
-		
 	}
-	
 	
 }
