@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PutBomber : MonoBehaviour 
 {
@@ -27,59 +28,11 @@ public class PutBomber : MonoBehaviour
 		}
 	}
 	
-	
-	public bool BombPresent 
-	{
-		get {
-			return this._bombPresent;
-		}
-		set {
-			_bombPresent = value;
-		}
-	}
-	
-	
-	
-	
-	private GameObject _ActualBomb;
-	public GameObject ActualBomb
-	{
-		get {
-			return this._ActualBomb;
-		}
-		set {
-			_ActualBomb = value;
-		}
-	}	
-	
-	
-	[SerializeField]
-	private GameObject[] _standardBombsStock;
-	public GameObject[] StandardBombsStock 
-	{
-		get {
-			return this._standardBombsStock;
-		}
-		set {
-			_standardBombsStock = value;
-		}
-	}
-	
-	
-	[SerializeField]
-	private GameObject[] _megaBombsStock;
-	public GameObject[] MegadBombsStock 
-	{
-		get {
-			return this._megaBombsStock;
-		}
-		set {
-			_megaBombsStock = value;
-		}
-	}
 
 
-	
+	[SerializeField]
+	public GameObject[] Bombes ;
+
 
 	// Use this for initialization
 	void Start () 
@@ -98,10 +51,10 @@ public class PutBomber : MonoBehaviour
 	
 	
 	
-	void BombeActivated()
+	void BombeActivated(GameObject myBomb)
     {
 			
-			bombBehaviour = ActualBomb.GetComponent<BombBehaviour>();
+			bombBehaviour = myBomb.GetComponent<BombBehaviour>();
 			bombBehaviour.PlayerName = _myTag;
 			bombBehaviour.BombIsActive = true;
 
@@ -112,75 +65,52 @@ public class PutBomber : MonoBehaviour
 
 	
 	
-	private void PutBomb(GameObject[] stock){
+	public void PutBomb(GameObject kindOfBomb){
 		
-		//Poser une bombe
-			BombPresent = true;
-			_myPosition = _myTransform.position;
+		GameObject myBomb = Instantiate (kindOfBomb)	as GameObject;
+		_myPosition = _myTransform.position;
+		myBomb.transform.position = _myPosition;
+		myBomb.rigidbody.velocity = Vector3.zero;
+
 			
-			int i = 0;
-			
-			do
-			{
-				ActualBomb = stock[i];
-				i++;
-			}
-		
-		
-			while((ActualBomb.GetComponent<BombBehaviour>().BombIsActive==true && i < stock.Length));
-			
-			ActualBomb.transform.position = _myPosition;
-			ActualBomb.rigidbody.velocity = Vector3.zero;
-			
-			BombeActivated();
-			
-			
-		
-		
-			
-			
+		BombeActivated(myBomb);
+						
 	}
-	
+
+
+
+	public void wantToPutBomb(PlayerInventory actualPlayerInventory){
+
+
+			switch(actualPlayerInventory.InCurrentSelection)
+			{
+				case 0: PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]);
+				break;
+
+			case 1: if(actualPlayerInventory.ResourceObjects["MegaBomb"]>0)
+				{ 
+					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]); 
+					actualPlayerInventory.ResourceObjects ["MegaBomb"]--;
+					actualPlayerInventory.RefreshRessource ();
+				}
+				break;
+
+			}
+
+
+
+	}
+
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		
 		
-		
-		if(Input.GetKeyDown(KeyCode.Space) && BombPresent==false)
-		{
-			
-			
-			
-			switch(playerInventory.InCurrentSelection)
-			{
-				case 0: PutBomb(StandardBombsStock);
-				break;
-				
-			case 1: if(playerInventory.ResourceObjects["MegaBomb"]>0)
-				{ 
-					PutBomb(MegadBombsStock); 
-					playerInventory.ResourceObjects ["MegaBomb"]--;
-					playerInventory.RefreshRessource ();
-				}
-				break;
-					
-			}
 
-			
-			
-		}
-		
-		if(BombPresent)
-		{
-			currentTime += Time.deltaTime;
-			if(currentTime>lifeTimeOfBomb)
-			{
-				BombPresent = false;
-				currentTime = 0;
-			}
-		}
+
+
+
 		
 		
 			

@@ -9,6 +9,7 @@ public class BombBehaviour : MonoBehaviour {
 	
 	[SerializeField]
 	private GameObject ExplosionParticule;
+	public KotapakNetworkScript networkScript;
 	
 	public float timeBeforeExplosion;
 	private float currentTime = 0;
@@ -65,13 +66,9 @@ public class BombBehaviour : MonoBehaviour {
 			if(currentTime>timeBeforeExplosion)
 			{
 				makeExplosion();
-				BombIsActive = false;
 				currentTime = 0;
-				
-				
-				// Reset position and velocity de la bombe
-				_myTransform.transform.localPosition = Vector3.zero;
-				_myRigidbody.rigidbody.velocity = Vector3.zero;
+				Destroy (this.gameObject);
+
 			}
 		}
 			

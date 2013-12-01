@@ -16,12 +16,16 @@ public class KotapakInputManager : MonoBehaviour {
 	[SerializeField]
 	private GameObject _prefabPlayer;
 
-
+	Vector3[] spawns = new Vector3[4];
 	private KotapakNetworkScript kotapakNetworkScript;
+	private PutBomber putBomberScript;
+	private PlayerInventory playerInventoryScript;
+
 	List <PlayerController> playersController = new List<PlayerController>() ;
 	List <PutBomber> putBombers = new List<PutBomber>();
+	List <PlayerInventory> playerInventory = new List<PlayerInventory>();
 	
-	private PutBomber putBomberScript;
+
 	
    	int count = 0;
    
@@ -31,8 +35,7 @@ public class KotapakInputManager : MonoBehaviour {
 	void Start () {
 		kotapakNetworkScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakNetworkScript>();
 		
-		//ICI QUEL SCRIPT DOIT-ON ALLER CHERCHER ?
-		putBomberScript = GameObject.Find("").GetComponent<PutBomber>();
+	
 		
 		//Chargement des spawns
 		spawns[0] = new Vector3(12,1,12);
@@ -45,7 +48,6 @@ public class KotapakInputManager : MonoBehaviour {
 				_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
 		}
 
-		Debug.Log (kotapakNetworkScript.DicoPlayersIntents.Count);
 				
 	}
 	
@@ -56,10 +58,9 @@ public class KotapakInputManager : MonoBehaviour {
 		if (Network.isClient) 
 		{
 
-				Debug.Log ("Je suis un client");
 				if (Input.GetKeyDown (KeyCode.DownArrow)) {
 					_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
-					Debug.Log ("Joueur veut descendre");
+					
 				}
 				if (Input.GetKeyUp (KeyCode.DownArrow)) 
 				{
@@ -71,7 +72,7 @@ public class KotapakInputManager : MonoBehaviour {
 
 
 				_myNetworkView.RPC ("PlayerWantToMoveUp", RPCMode.Server, Network.player, true);
-				Debug.Log ("Joueur veut monter");
+
 
 			}
 			if (Input.GetKeyUp (KeyCode.UpArrow)) {
@@ -83,7 +84,7 @@ public class KotapakInputManager : MonoBehaviour {
 
 
 				_myNetworkView.RPC ("PlayerWantToMoveLeft", RPCMode.Server, Network.player, true);
-				Debug.Log ("Joueur veut aller à gauche");
+
 
 			}
 			if (Input.GetKeyUp (KeyCode.LeftArrow)) {
@@ -98,7 +99,7 @@ public class KotapakInputManager : MonoBehaviour {
 
 
 				_myNetworkView.RPC ("PlayerWantToMoveRight", RPCMode.Server, Network.player, true);
-				Debug.Log ("Joueur veut aller à droite");
+
 
 			}
 			if (Input.GetKeyUp (KeyCode.RightArrow)) {
@@ -106,16 +107,11 @@ public class KotapakInputManager : MonoBehaviour {
 				_myNetworkView.RPC ("PlayerWantToMoveRight", RPCMode.Server, Network.player, false);
 			}	
 			
-			if (Input.GetKeyDown (KeyCode.Space)) 
-			{
-				_myNetworkView.RPC ("PlayerPutBomb", RPCMode.Server, Network.player, true);
-				Debug.Log ("Joueur pose bombe");
-			}
 			if (Input.GetKeyUp (KeyCode.Space)) 
 			{
-				_myNetworkView.RPC ("PlayerPutBomb", RPCMode.Server, Network.player, false);
-
+				_myNetworkView.RPC ("PlayerWantPutBomb", RPCMode.Server, Network.player, true);
 			}
+
 		} 
 
 
@@ -123,12 +119,9 @@ public class KotapakInputManager : MonoBehaviour {
 
 	void FixedUpdate(){
 
-		Debug.Log ("dico taille :" + kotapakNetworkScript.DicoPlayersIntents.Count);
-		Debug.Log ("controller taille :" + playersController.Count);
-		Debug.Log ("bombers taille :" + putBombers.Count);
+	
 
 		foreach (var p in kotapakNetworkScript.DicoPlayersIntents) {
-			Debug.Log ("p=" + int.Parse (p.Key.ToString ()));
 
 
 			if (p.Value._wantToMoveDown || p.Value._wantToMoveUp || p.Value._wantToMoveRight || p.Value._wantToMoveLeft) {
@@ -149,45 +142,53 @@ public class KotapakInputManager : MonoBehaviour {
 				if (p.Value._wantToMoveRight) {
 					playersController [int.Parse (p.Key.ToString ()) - 1].MoveToRight ();
 				}
-			
+
 			} else {
 				try {
 					playersController [int.Parse (p.Key.ToString ())-1]._inCurrentDeplacement=0;
+					playersController [int.Parse (p.Key.ToString ())-1]._myRigidbody.velocity = Vector3.zero;
 				} catch (System.Exception ex) {
-	
+					Debug.Log (ex.Message);
 				}
 				
 			}
 
+			if (p.Value._wantToPutBomb) {
+				putBombers[int.Parse(p.Key.ToString ())-1].wantToPutBomb(playerInventory[int.Parse(p.Key.ToString ())-1]);
+				kotapakNetworkScript.DicoPlayersIntents[p.Key]._wantToPutBomb = false;
+
+			}
+
+
 		}
 	
-		// CETTE PARTIE POSE PROBLEME JE PENSE
-		foreach (var p in kotapakNetworkScript.DicoPlayersBombPresent) {
-					
-			if (p.Value._playerBombPresent) {
-		
-				if (p.Value._playerBombPresent) {
-					putBombers[int.Parse (p.Key.ToString ()) - 1].Update();
-				} 
-			}
-		}
+
+
+	
+
+
+
 
 	}
 
 	[RPC]	
-	void PlayerPutBomb(NetworkPlayer p, bool b)
+	void PlayerWantPutBomb(NetworkPlayer p, bool b)
 	{
-		kotapakNetworkScript.DicoPlayersBombPresent[p]._playerBombPresent = b;
+		Debug.Log ("RPC methode");
+		kotapakNetworkScript.DicoPlayersIntents[p]._wantToPutBomb = b;
+		Debug.Log ("Valeur de _wantToBomb = "+ b);
+		if (Network.isServer)
 		{
-			_myNetworkView.RPC("PlayerPutBomb", RPCMode.OthersBuffered, p, b);
+			_myNetworkView.RPC("PlayerWantPutBomb", RPCMode.OthersBuffered, p, b);
 		}
+
 	}
 
 
     [RPC]
 	void PlayerWantToMoveDown(NetworkPlayer p, bool b)
     {
-		Debug.Log("Le joueur"+p+"veut descendre");
+
 		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveDown = b;
 
 		if (Network.isServer)
@@ -200,7 +201,6 @@ public class KotapakInputManager : MonoBehaviour {
 	[RPC]
 	void PlayerWantToMoveUp(NetworkPlayer p, bool b)
 	{
-		Debug.Log("RPC WantToMove");
 		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveUp = b;
 
 		if (Network.isServer)
@@ -212,7 +212,6 @@ public class KotapakInputManager : MonoBehaviour {
 	[RPC]
 	void PlayerWantToMoveLeft(NetworkPlayer p, bool b)
 	{
-		Debug.Log("RPC WantToMove");
 		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveLeft = b;
 
 		if (Network.isServer)
@@ -225,7 +224,6 @@ public class KotapakInputManager : MonoBehaviour {
 	[RPC]
 	void PlayerWantToMoveRight(NetworkPlayer p, bool b)
 	{
-		Debug.Log("RPC WantToMove");
 		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveRight = b;
 
 		if (Network.isServer)
@@ -242,6 +240,7 @@ public class KotapakInputManager : MonoBehaviour {
 		Player.transform.position = spawns[count];
 		playersController.Add(Player.GetComponent<PlayerController>());
 		putBombers.Add(Player.GetComponent<PutBomber>());
+		playerInventory.Add(Player.GetComponent<PlayerInventory>());
 		count++;
 	}
 

@@ -22,12 +22,13 @@ public class KotapakNetworkScript : MonoBehaviour {
 		public bool _wantToMoveDown = false;
 		public bool _wantToMoveLeft = false;
 		public bool _wantToMoveRight = false;
+		public bool _wantToPutBomb = false;
 	
 	}
 	
 	public class PlayerBombPresent
 	{
-		public bool _playerBombPresent = false;
+		public bool _wantToPutBomb = false;
 	}
 
 
@@ -38,24 +39,13 @@ public class KotapakNetworkScript : MonoBehaviour {
 		get { return _dicoPlayersIntents; }
 		set { _dicoPlayersIntents = value; }
 	}
-	
-	private Dictionary<NetworkPlayer, PlayerBombPresent> _dicoPlayersBombPresent;
-	public Dictionary<NetworkPlayer, PlayerBombPresent> DicoPlayersBombPresent 
-	{
-		get {
-			return this._dicoPlayersBombPresent;
-		}
-		set {
-			_dicoPlayersBombPresent = value;
-		}
-	}
 
 
 
 	void Awake () {
 		DontDestroyOnLoad(this.gameObject);
 		DicoPlayersIntents = new Dictionary<NetworkPlayer, PlayerIntents>();
-		DicoPlayersBombPresent = new Dictionary<NetworkPlayer, PlayerBombPresent>();
+
 	}
 	
 
@@ -77,7 +67,7 @@ public class KotapakNetworkScript : MonoBehaviour {
     {
 
 		DicoPlayersIntents.Add(player, new PlayerIntents());
-		DicoPlayersBombPresent.Add(player, new PlayerBombPresent());
+
 		networkView.RPC("NewPlayerConnected", RPCMode.Others, player);
 
         if (Network.connections.Length == 2)
@@ -96,7 +86,6 @@ public class KotapakNetworkScript : MonoBehaviour {
 	void NewPlayerConnected(NetworkPlayer p)
 	{
 		DicoPlayersIntents.Add(p, new PlayerIntents());		
-		DicoPlayersBombPresent.Add(p, new PlayerBombPresent());
 
 	}
 	
