@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AddItemInInventory : MonoBehaviour {
 
+	[SerializeField]
+	private KotapakInputManager KotapakInputManagerScript;
 
-	private PlayerInventory playerInventory;
 	private string _myTag ;
 
 
@@ -21,11 +23,10 @@ public class AddItemInInventory : MonoBehaviour {
 		if(col.gameObject.layer == LayerMask.NameToLayer("Player"))
 		{
 
-			playerInventory = col.GetComponent<PlayerInventory>();
-			playerInventory.ResourceObjects[_myTag]++;
-			playerInventory.RefreshRessource();
-
-			Destroy(gameObject);
+			KotapakInputManagerScript.playerInventory[int.Parse (Network.player.ToString ()) - 1].ResourceObjects[_myTag]++;
+			KotapakInputManagerScript._myNetworkView.RPC ("AddItemsToStock", RPCMode.Server, Network.player, _myTag, KotapakInputManagerScript.playerInventory[int.Parse (Network.player.ToString ()) - 1].ResourceObjects[_myTag]) ;
+			
+			Network.Destroy(gameObject);
 		}
 
 	}	

@@ -20,14 +20,14 @@ public class KotapakInputManager : MonoBehaviour {
 	Vector3[] spawns = new Vector3[4];
 	private KotapakNetworkScript kotapakNetworkScript;
 	private PutBomber putBomberScript;
-	private PlayerInventory playerInventoryScript;
+	public PlayerInventory playerInventoryScript;
 
 	[SerializeField]
 	private GameObject GUIcamera ;
 
 	List <PlayerController> playersController = new List<PlayerController>() ;
 	List <PutBomber> putBombers = new List<PutBomber>();
-	List <PlayerInventory> playerInventory = new List<PlayerInventory>();
+	public List <PlayerInventory> playerInventory = new List<PlayerInventory>();
 
 
 
@@ -35,7 +35,7 @@ public class KotapakInputManager : MonoBehaviour {
    	int count = 0;
    
 	[SerializeField]
-	private NetworkView _myNetworkView ;
+	public NetworkView _myNetworkView ;
 
 	void Start () {
 		kotapakNetworkScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakNetworkScript>();
@@ -120,7 +120,7 @@ public class KotapakInputManager : MonoBehaviour {
 			{
 				_myNetworkView.RPC("PlayerRefreshButton", RPCMode.Server, Network.player, playerInventory[int.Parse(Network.player.ToString())-1].InCurrentSelection );
 				_myNetworkView.RPC ("PlayerWantPutBomb", RPCMode.Server, Network.player, true);
-				_myNetworkView.RPC ("PlayerMAJstock", RPCMode.Server, Network.player, playerInventory[int.Parse(Network.player.ToString())-1].ResourceObjects);
+				_myNetworkView.RPC ("PlayerMAJstock", RPCMode.Server, Network.player, playerInventory[int.Parse(Network.player.ToString())-1].IntToNameResourceObjects[playerInventory[int.Parse(Network.player.ToString())-1].InCurrentSelection]);
 			}
 
 		} 
@@ -256,15 +256,32 @@ public class KotapakInputManager : MonoBehaviour {
 
 
 	[RPC]
-	void PlayerMAJstock(NetworkPlayer p,  Dictionary<string, int> currentResource)
+	void PlayerMAJstock(NetworkPlayer p, string key, int value)
 	{
-		playerInventory [int.Parse (p.ToString ()) - 1].ResourceObjects = currentResource;
+				Debug.Log ("Methode RPC playerMAJstock");
+		playerInventory [int.Parse (p.ToString ()) - 1].ResourceObjects[key]= value;
+		playerInventory [int.Parse (p.ToString ()) - 1].RefreshRessource ();
 
 		if (Network.isServer)
 		{
-			_myNetworkView.RPC("PlayerRefreshButton", RPCMode.OthersBuffered, p, currentResource );
+			_myNetworkView.RPC("PlayerMAJstock", RPCMode.OthersBuffered, p, key,value );
 		}
 	}
+
+
+	[RPC]
+	void AddItemsToStock(NetworkPlayer p, string key, int value)
+	{
+		playerInventory [int.Parse (p.ToString ()) - 1].ResourceObjects[key]=value;
+		_myNetworkView.RPC("PlayerMAJstock", RPCMode.OthersBuffered, p, key, value );
+
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("AddItemsToStock", RPCMode.OthersBuffered, p );
+		}
+	}
+
 
 
 

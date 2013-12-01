@@ -17,6 +17,17 @@ public class PlayerInventory : MonoBehaviour {
 	
 	
 	public GameObject[] _ressourceButtons;
+	public GameObject[] _stockIndicators;
+
+	public GameObject[] StockIndicators {
+		get {
+			return _stockIndicators;
+		}
+		set {
+			_stockIndicators = value;
+		}
+	}
+
 	public GameObject playerAvatar;
 	public GameObject playerMesh;
 	public TextMesh[] itemsIndicator;
@@ -71,18 +82,31 @@ public class PlayerInventory : MonoBehaviour {
 	public void RefreshRessource()
 	{
 
-		for (int i = 1; i < ResourceObjects.Count; i++) {
-			itemsIndicator[i].text = ResourceObjects[_intToNameResourceObjects[i]].ToString();
+
+		for (int i = 1; i < StockIndicators.Length; i++) {
+
+
+			StockIndicators[i].GetComponent<TextMesh>().text = ResourceObjects[_intToNameResourceObjects[i]].ToString();
+
+
 		}
+
+
 
 	}
 	
 	
-	
+
 	public void ChangeAvatar(string tagName){
+		
+
+
 
 		playerAvatar = GameObject.Find ("Avatar");
-		_ressourceButtons = GameObject.FindGameObjectsWithTag ("Buttons");
+		_ressourceButtons = GameObject.FindGameObjectsWithTag("Buttons");
+
+
+
 
 		switch (tagName) 
 		{
@@ -119,11 +143,14 @@ public class PlayerInventory : MonoBehaviour {
 
 		// Initialisation des dictionnaires
 		ResourceObjects.Add("DefaultBomb", 9999);
-		ResourceObjects.Add("MegaBomb", 2);
+		ResourceObjects.Add("MegaBomb", 0);
 		refreshButtons(0);
 
 		IntToNameResourceObjects.Add(0, "DefaultBomb");
 		IntToNameResourceObjects.Add(1, "MegaBomb");
+
+
+		StockIndicators = GameObject.FindGameObjectsWithTag("Indicators");
 
 
 
