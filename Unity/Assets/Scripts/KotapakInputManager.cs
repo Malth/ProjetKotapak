@@ -116,6 +116,7 @@ public class KotapakInputManager : MonoBehaviour {
 			
 			if (Input.GetKeyUp (KeyCode.Space)) 
 			{
+				_myNetworkView.RPC("PlayerRefreshButton", RPCMode.Server, Network.player, playerInventory[int.Parse(Network.player.ToString())-1].InCurrentSelection );
 				_myNetworkView.RPC ("PlayerWantPutBomb", RPCMode.Server, Network.player, true);
 			}
 
@@ -234,6 +235,19 @@ public class KotapakInputManager : MonoBehaviour {
 			_myNetworkView.RPC("PlayerWantToMoveRight", RPCMode.OthersBuffered, p, b);
 		}
 	}
+
+
+	[RPC]
+	void PlayerRefreshButton(NetworkPlayer p, int currentSelect)
+	{
+		playerInventory [int.Parse (p.ToString ()) - 1].InCurrentSelection = currentSelect;
+
+		if (Network.isServer)
+		{
+			_myNetworkView.RPC("PlayerRefreshButton", RPCMode.OthersBuffered, p, currentSelect );
+		}
+	}
+
 
 
 	[RPC]

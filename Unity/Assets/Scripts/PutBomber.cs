@@ -67,7 +67,7 @@ public class PutBomber : MonoBehaviour
 	
 	public void PutBomb(GameObject kindOfBomb){
 		
-		GameObject myBomb = Instantiate (kindOfBomb)	as GameObject;
+		GameObject myBomb = Instantiate (kindOfBomb)as GameObject;
 		_myPosition = _myTransform.position;
 		myBomb.transform.position = _myPosition;
 		myBomb.rigidbody.velocity = Vector3.zero;
@@ -82,18 +82,29 @@ public class PutBomber : MonoBehaviour
 	public void wantToPutBomb(PlayerInventory actualPlayerInventory){
 
 
+			Debug.Log (actualPlayerInventory.InCurrentSelection);
 			switch(actualPlayerInventory.InCurrentSelection)
 			{
 				case 0: PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]);
 				break;
 
-			case 1: if(actualPlayerInventory.ResourceObjects["MegaBomb"]>0)
+
+				case 1: 
+					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]); 
+					//actualPlayerInventory.ResourceObjects ["MegaBomb"]--;
+					//actualPlayerInventory.RefreshRessource ();
+				
+				break;
+
+			/*
+				case 1: if(actualPlayerInventory.ResourceObjects["MegaBomb"]>0)
 				{ 
 					PutBomb(Bombes[actualPlayerInventory.InCurrentSelection]); 
 					actualPlayerInventory.ResourceObjects ["MegaBomb"]--;
 					actualPlayerInventory.RefreshRessource ();
 				}
 				break;
+			*/
 
 			}
 

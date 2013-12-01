@@ -12,6 +12,8 @@ public class PlayerInventory : MonoBehaviour {
 
 	private Color _activeColor = new Color(0.5f,0.5f,0.5f,1f);
 	private Color _inactiveColor = new Color(0.5f,0.5f,0.5f,0.2f);
+	private KotapakInputManager kotapakInputManagerScript;
+
 	
 	
 	public GameObject[] _ressourceButtons;
@@ -69,6 +71,7 @@ public class PlayerInventory : MonoBehaviour {
 	public void ChangeAvatar(string tagName){
 
 		playerAvatar = GameObject.Find ("Avatar");
+		_ressourceButtons = GameObject.FindGameObjectsWithTag ("Buttons");
 
 		switch (tagName) 
 		{
@@ -102,6 +105,7 @@ public class PlayerInventory : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+
 		// Initialisation des dictionnaires
 		ResourceObjects.Add("DefaultBomb", 9999);
 		ResourceObjects.Add("MegaBomb", 0);
@@ -109,6 +113,8 @@ public class PlayerInventory : MonoBehaviour {
 
 		_intToNameResourceObjects.Add(0, "DefaultBomb");
 		_intToNameResourceObjects.Add(1, "MegaBomb");
+
+
 
 
 
@@ -126,6 +132,7 @@ public class PlayerInventory : MonoBehaviour {
 			if(i==InCurrentSelection)
 			{
 				_ressourceButtons[i].renderer.material.SetColor("_TintColor", _inactiveColor) ;	
+
 			}
 			else
 			{
