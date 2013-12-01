@@ -25,12 +25,6 @@ public class KotapakNetworkScript : MonoBehaviour {
 		public bool _wantToPutBomb = false;
 	
 	}
-	
-	public class PlayerBombPresent
-	{
-		public bool _wantToPutBomb = false;
-	}
-
 
 
 	private Dictionary<NetworkPlayer, PlayerIntents> _dicoPlayersIntents;
@@ -51,11 +45,11 @@ public class KotapakNetworkScript : MonoBehaviour {
 
 	void Start () {
         Application.runInBackground = true;
-		//Application.LoadLevel("level1");
+
         if (IsServer)
         {
             Network.InitializeSecurity();
-            Network.InitializeServer(2, 6600, true);
+            Network.InitializeServer(3, 6600, true);
         }
         else
         {
@@ -65,12 +59,10 @@ public class KotapakNetworkScript : MonoBehaviour {
 
     void OnPlayerConnected(NetworkPlayer player)
     {
-
 		DicoPlayersIntents.Add(player, new PlayerIntents());
+		networkView.RPC("NewPlayerConnected", RPCMode.OthersBuffered, player);
 
-		networkView.RPC("NewPlayerConnected", RPCMode.Others, player);
-
-        if (Network.connections.Length == 2)
+        if (Network.connections.Length == 3)
         {
 
 			if(IsServer){
@@ -86,7 +78,6 @@ public class KotapakNetworkScript : MonoBehaviour {
 	void NewPlayerConnected(NetworkPlayer p)
 	{
 		DicoPlayersIntents.Add(p, new PlayerIntents());		
-
 	}
 	
 

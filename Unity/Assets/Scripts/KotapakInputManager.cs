@@ -58,14 +58,19 @@ public class KotapakInputManager : MonoBehaviour {
 		if (Network.isClient) 
 		{
 
-				if (Input.GetKeyDown (KeyCode.DownArrow)) {
-					_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
-					
-				}
-				if (Input.GetKeyUp (KeyCode.DownArrow)) 
-				{
-					_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, false);
-				}
+
+			if (Input.GetKeyDown (KeyCode.DownArrow)) 
+			{
+				_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, true);
+			
+			}
+
+			if (Input.GetKeyUp (KeyCode.DownArrow)) 
+			{
+
+				_myNetworkView.RPC ("PlayerWantToMoveDown", RPCMode.Server, Network.player, false);
+			
+			}
 
 
 			if (Input.GetKeyDown (KeyCode.UpArrow)) {
@@ -93,8 +98,6 @@ public class KotapakInputManager : MonoBehaviour {
 			}	
 
 
-
-
 			if (Input.GetKeyDown (KeyCode.RightArrow)) {
 
 
@@ -120,6 +123,9 @@ public class KotapakInputManager : MonoBehaviour {
 	void FixedUpdate(){
 
 	
+		Debug.Log ("Player controller :"+playersController.Count);
+		Debug.Log ("Put bombers:"+putBombers.Count);
+		Debug.Log ("Player inventory :"+playerInventory.Count);
 
 		foreach (var p in kotapakNetworkScript.DicoPlayersIntents) {
 
@@ -127,7 +133,7 @@ public class KotapakInputManager : MonoBehaviour {
 			if (p.Value._wantToMoveDown || p.Value._wantToMoveUp || p.Value._wantToMoveRight || p.Value._wantToMoveLeft) {
 
 				if (p.Value._wantToMoveDown) {
-					playersController [int.Parse (p.Key.ToString ()) - 1].MoveToDown ();
+					playersController [int.Parse (p.Key.ToString ())-1].MoveToDown ();
 				} 
 
 				if (p.Value._wantToMoveUp) {
@@ -150,7 +156,6 @@ public class KotapakInputManager : MonoBehaviour {
 				} catch (System.Exception ex) {
 					Debug.Log (ex.Message);
 				}
-				
 			}
 
 			if (p.Value._wantToPutBomb) {
@@ -174,9 +179,8 @@ public class KotapakInputManager : MonoBehaviour {
 	[RPC]	
 	void PlayerWantPutBomb(NetworkPlayer p, bool b)
 	{
-		Debug.Log ("RPC methode");
 		kotapakNetworkScript.DicoPlayersIntents[p]._wantToPutBomb = b;
-		Debug.Log ("Valeur de _wantToBomb = "+ b);
+
 		if (Network.isServer)
 		{
 			_myNetworkView.RPC("PlayerWantPutBomb", RPCMode.OthersBuffered, p, b);
@@ -188,7 +192,6 @@ public class KotapakInputManager : MonoBehaviour {
     [RPC]
 	void PlayerWantToMoveDown(NetworkPlayer p, bool b)
     {
-
 		kotapakNetworkScript.DicoPlayersIntents[p]._wantToMoveDown = b;
 
 		if (Network.isServer)
