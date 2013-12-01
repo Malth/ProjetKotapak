@@ -54,8 +54,13 @@ public class KotapakInputManager : MonoBehaviour {
 				_myNetworkView.RPC ("createNewPlayer", RPCMode.All);
 		}
 
-				
+
+
+
 	}
+
+
+		
 	
 
 	
@@ -295,8 +300,30 @@ public class KotapakInputManager : MonoBehaviour {
 		playersController.Add(Player.GetComponent<PlayerController>());
 		putBombers.Add(Player.GetComponent<PutBomber>());
 		playerInventoryScript = Player.GetComponent<PlayerInventory> ();
-		playerInventoryScript.ChangeAvatar(Player.tag);
+
+
+		if (Player.tag == "player" + int.Parse (Network.player.ToString ())) {
+			playerInventoryScript.ChangeAvatar(Player.tag);
+		}
+
+
 		playerInventory.Add(playerInventoryScript);
+
+				if (Player.tag == "player" + int.Parse (Network.player.ToString ())) {
+					Light[] _myLight = Player.GetComponentsInChildren<Light>();
+						foreach (Light light in _myLight) {
+								light.intensity = 2;
+						}
+				}
+				if (Network.isServer) {
+				
+			Light[] _myLight = Player.GetComponentsInChildren<Light>();
+			foreach (Light light in _myLight) {
+				light.intensity = 2;
+			}
+		
+		}
+
 
 
 		count++;

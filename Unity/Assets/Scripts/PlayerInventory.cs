@@ -102,9 +102,7 @@ public class PlayerInventory : MonoBehaviour {
 
 
 
-		playerAvatar = GameObject.Find ("Avatar");
-		_ressourceButtons = GameObject.FindGameObjectsWithTag("Buttons");
-
+		playerAvatar = GameObject.Find("Avatar");
 
 
 
@@ -140,6 +138,7 @@ public class PlayerInventory : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+		_ressourceButtons = GameObject.FindGameObjectsWithTag("Buttons");
 
 		// Initialisation des dictionnaires
 		ResourceObjects.Add("DefaultBomb", 9999);
