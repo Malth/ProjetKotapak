@@ -13,7 +13,8 @@ public class KotapakNetworkScript : MonoBehaviour {
         set { _isServer = value; }
     }
 
-
+	public string _levelToLoad = "level1";
+	public int _numberOfPlayers;
 
 	public class PlayerIntents
 	{
@@ -45,11 +46,15 @@ public class KotapakNetworkScript : MonoBehaviour {
 
 	void Start () {
         Application.runInBackground = true;
+		 _numberOfPlayers = PlayerPrefs.GetInt("NumbersOfPlayers");
+		_levelToLoad = PlayerPrefs.GetString("LevelToLoad");
+		
+		Debug.Log ("Nombre de joueurs : "+_numberOfPlayers);
 
         if (IsServer)
         {
             Network.InitializeSecurity();
-            Network.InitializeServer(2, 6600, true);
+            Network.InitializeServer( _numberOfPlayers, 6600, true);
         }
         else
         {
@@ -62,11 +67,11 @@ public class KotapakNetworkScript : MonoBehaviour {
 		DicoPlayersIntents.Add(player, new PlayerIntents());
 		networkView.RPC("NewPlayerConnected", RPCMode.OthersBuffered, player);
 
-        if (Network.connections.Length == 2)
+        if (Network.connections.Length == _numberOfPlayers)
         {
 
 			if(IsServer){
-				networkView.RPC("LoadLevel", RPCMode.All, "level1");
+				networkView.RPC("LoadLevel", RPCMode.All, _levelToLoad);
 			}
         }
     }
