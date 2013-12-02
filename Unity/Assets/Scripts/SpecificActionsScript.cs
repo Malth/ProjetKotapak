@@ -6,8 +6,7 @@ public class SpecificActionsScript : MonoBehaviour
 	//AudioClip son =  null;
 	bool inside;
 	
-	[SerializeField]
-	bool IAmAServer;
+
 /*void OnMouseUp() { 
 	//audio.PlayOneShot(son);
 	Debug.Log ("Texte cliqué : " +this.name);
@@ -34,12 +33,7 @@ public class SpecificActionsScript : MonoBehaviour
 			if (this.name == "Quitter")
 			 	Application.Quit();
 			else
-			{
-				if (this.name == "connectionScreen" && IAmAServer)
-					Application.LoadLevel("ParametersServer");
-				else
-					Application.LoadLevel(this.name);
-			}
+			 	Application.LoadLevel(this.name);
 		}		
 	}
 	

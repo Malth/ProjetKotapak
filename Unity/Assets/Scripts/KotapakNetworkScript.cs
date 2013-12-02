@@ -13,8 +13,7 @@ public class KotapakNetworkScript : MonoBehaviour {
         set { _isServer = value; }
     }
 
-	
-	public int _numberOfPlayers;
+
 
 	public class PlayerIntents
 	{
@@ -46,13 +45,11 @@ public class KotapakNetworkScript : MonoBehaviour {
 
 	void Start () {
         Application.runInBackground = true;
-		 _numberOfPlayers = PlayerPrefs.GetInt("NumbersOfPlayers");
-		Debug.Log ("Nombre de joueurs : "+_numberOfPlayers);
 
         if (IsServer)
         {
             Network.InitializeSecurity();
-            Network.InitializeServer( _numberOfPlayers, 6600, true);
+            Network.InitializeServer(2, 6600, true);
         }
         else
         {
@@ -65,7 +62,7 @@ public class KotapakNetworkScript : MonoBehaviour {
 		DicoPlayersIntents.Add(player, new PlayerIntents());
 		networkView.RPC("NewPlayerConnected", RPCMode.OthersBuffered, player);
 
-        if (Network.connections.Length == _numberOfPlayers)
+        if (Network.connections.Length == 2)
         {
 
 			if(IsServer){
