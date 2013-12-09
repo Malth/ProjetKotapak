@@ -7,16 +7,6 @@ public class SpecificActionsScript : MonoBehaviour
 	bool inside;
 	
 
-/*void OnMouseUp() { 
-	//audio.PlayOneShot(son);
-	Debug.Log ("Texte cliqué : " +this.name);
-	if (this.name == "Quitter")
-	 	Application.Quit();
-	else
-	 	Application.LoadLevel(this.name);
-}*/
-
-
 
 	// Use this for initialization
 	void Start () 

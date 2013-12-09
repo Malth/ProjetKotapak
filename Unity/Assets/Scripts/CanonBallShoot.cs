@@ -1,19 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CanonBallShoot : MonoBehaviour {
-	
-	
-	
-	
-	
+/// <summary>
+/// Script managing Cannon ball shoot.
+/// </summary>
+public class CanonBallShoot : MonoBehaviour 
+{
 	private string _tagName ;
 	private Rigidbody _myRigidBody;
 	private Transform _myTransform;
 	private Vector3 _defaultPosition;
+	/// <summary>
+	/// Boolean stating true if a bullet has been stopped, false esle.
+	/// </summary>
 	private bool _bulletStopped = false;
-
-	public bool BulletStopped {
+	/// <summary>
+	/// Boolean stating true if a bullet has been stopped, false esle.
+	/// </summary>
+	public bool BulletStopped 
+	{
 		get {
 			return this._bulletStopped;
 		}
@@ -24,16 +29,13 @@ public class CanonBallShoot : MonoBehaviour {
 	
 	
 	// Use this for initialization
-	void Start () {
-		
+	void Start () 
+	{		
 		_myRigidBody = this.rigidbody;
 		_defaultPosition = this.transform.localPosition;
 		_myTransform = this.transform;
-		_tagName = this.tag;
-		 
-		
-	}
-	
+		_tagName = this.tag;		
+	}	
 	
 	IEnumerator Wait4seconds ()
 	{
@@ -42,8 +44,11 @@ public class CanonBallShoot : MonoBehaviour {
 	}
 	
 	
-	// Update is called once per frame
-	void Update () {
+	/// <summary>
+	/// Launch a bullet every seconds, if no bullet launched.
+	/// </summary>
+	void Update () 
+	{
 		if(BulletStopped)
 		{
 			StartCoroutine(Wait4seconds());
@@ -69,9 +74,14 @@ public class CanonBallShoot : MonoBehaviour {
 		 
 	}
 	
-	
-	public void OnTriggerEnter(Collider col) 
-		
+	/// <summary>
+	/// Raises the trigger enter event. When hitting a wall it resets the bullet
+	/// When hitting a player, it kills him.
+	/// </summary>
+	/// <param name='col'>
+	/// Collider
+	/// </param>
+	public void OnTriggerEnter(Collider col) 		
 	{
 		
 		if(col.gameObject.layer == LayerMask.NameToLayer("Walls"))

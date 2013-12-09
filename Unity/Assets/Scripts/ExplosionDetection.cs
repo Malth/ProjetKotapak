@@ -1,51 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
+/// <summary>
+/// Script managing the Detection of all bombs' explosion in multiplayer game.
+/// </summary>
+public class ExplosionDetection : MonoBehaviour 
+{
+	/// <summary>
+	/// The kotapak input manager script.
+	/// </summary>
+	KotapakInputManager KotapakInputManagerScript ;
+	void Start(){
+		KotapakInputManagerScript = GameObject.Find("aKotapakNetworkManager").GetComponent<KotapakInputManager>();
+	}
 
-public class ExplosionDetection : MonoBehaviour {
-	
-	
-	private bool isDead = false;
-
-	public bool IsDead {
-		get {
-			return this.isDead;
-		}
-		set {
-			isDead = value;
-		}
-	}	
-	
-	
-	void OnGUI() {
-		
-		if (IsDead)
-		{
-		GUI.Label (new Rect (Screen.width/2-30, Screen.width/2-100, 200, 100), "Le joueur s'est fait tuer par"+this.transform.parent.tag);
-		Application.LoadLevel(0);	
-		}
-	
-		
-   }
-	
-	
+	/// <summary>
+	/// Raises the trigger enter event.
+	/// When around a brick wall or a player, it destroy it.
+	/// </summary>
+	/// <param name='col'>
+	/// Col.
+	/// </param>
 	public void OnTriggerEnter(Collider col) 
 	{
-		Debug.Log ("Tadaaaaa Trigger ok");
-		//Si le Layer est un Brick
 		if(col.gameObject.layer == LayerMask.NameToLayer("Bricks"))
 		{
 			Destroy(col.gameObject);
-			Debug.Log ("Il y a un mur destructible.");
 		}
 		if(col.gameObject.layer == LayerMask.NameToLayer("Player"))
 		{
-			IsDead = true;
-			Destroy(col.gameObject);
-			Debug.Log ("Il y a un joueur.");
-		}
-		if(col.gameObject.layer == LayerMask.NameToLayer("Walls"))
-		{
-			Debug.Log ("Il y a un mur indestructible.");
+			KotapakInputManagerScript._myNetworkView.RPC ("CheckSurvivorAndDie", RPCMode.Server, col.gameObject.tag);
+
 		}
 	}	
 }
